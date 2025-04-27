@@ -1,0 +1,319 @@
+@import "tailwindcss";
+@plugin "daisyui";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+.signupoverlay {
+  background-color: #f3f4f6;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2%;
+}
+.signup-progress {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.signup-progress .dot {
+  width: 12px;
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.signup-progress .dot.active {
+  background: #2563eb;
+}
+.signupcontainer {
+  color: black;
+  background: #ffffff;
+  width: 80%;
+  display: flex;
+  border-radius: 10px;
+  padding: 2%;
+}
+.signup-section {
+  /* border: 1px solid green;*/
+  flex: 1;
+  padding: 3%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.signup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.signup-section h1 {
+  font-size: 2rem;
+  line-height: 35px;
+}
+.signup-section h5 {
+  font-size: 1rem;
+  margin-bottom: 30px;
+}
+.signup-section .initialsignup-form {
+  /* border: 1px solid goldenrod;*/
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 3%;
+}
+.signup-section .initialsignup-form article {
+  width: 100%;
+  display: flex;
+  padding: 3% 2%;
+  margin-bottom: 2%;
+
+  border: 1px solid #e0e0e0; /* light gray border */
+  border-radius: 8px;
+  align-items: center;
+  gap: 10px;
+}
+.signup-section .initialsignup-form article input {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+
+  padding: 5px;
+  outline: none;
+}
+.signup-section .initialsignup-form button {
+  width: 100%;
+
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 1rem;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+.signup-section .initialsignup-form button:hover {
+  background: #3b82f6;
+}
+.section2 {
+  flex: 1;
+  border: 1px solid green;
+  border-radius: 8px;
+  background: #2563eb;
+  padding: 5%;
+  color: #fff;
+}
+.section2 .section2-Heading {
+  font-size: 1.5rem;
+  max-width: 250px;
+}
+.section2 .sub-heading {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.rent-summary {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 360px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  font-family: "Poppins", sans-serif;
+  color: #111827;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.rent-summary h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.amount {
+  font-size: 32px;
+  color: #2563eb;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.rent-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.rent-stats div {
+  flex: 1 1 45%;
+  background: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.count {
+  font-size: 18px;
+  font-weight: 700;
+  display: block;
+}
+
+.label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.rent-summary h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+
+/*stage 2*/
+/*
+.enhanced-step {
+  text-align: center;
+
+  animation: fadeIn 0.4s ease-in-out;
+  background-color: #f9f9f9;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+  width: 100%;
+}
+
+.highlighted-email {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.check-desc {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.resend-wrapper {
+  margin-top: 2rem;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.resend-button {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: background 0.5s ease;
+}
+
+.resend-button:hover {
+  background-color: #3a78c2;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+*/
+.enhanced-step {
+  text-align: center;
+  animation: fadeIn 1.5s ease-in;
+  border-radius: 1rem;
+
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto; /* Center the container */
+}
+.Mail-icon {
+  animation: fadeIn 0.6s ease-in;
+}
+.enhanced-step h1 {
+  font-size: 2rem; /* Slightly larger heading */
+  margin-top: 10px;
+}
+
+.highlighted-email {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 1.3rem;
+
+  padding: 0.8rem 1.2rem;
+  background-color: #f0f5ff; /* Light blue background */
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.check-desc {
+  font-size: 1.3rem;
+  color: #666;
+  margin: 10px 0px;
+}
+
+.check-desc:last-of-type {
+  margin-bottom: 2rem; /* Extra space before resend */
+}
+
+.resend-wrapper {
+  margin-top: 2.5rem; /* More space above resend section */
+  font-size: 0.95rem;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem; /* Space between text and button */
+}
+
+.resend-button {
+  padding: 0.8rem 2rem; /* Larger button */
+  background-color: #2563eb;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: fit-content; /* Button width based on content */
+}
+
+.resend-button:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px); /* Subtle hover effect */
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
