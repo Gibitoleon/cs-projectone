@@ -1,0 +1,29 @@
+** set you environment variables
+change the file name to env
+when pushing code dont push the file **
+
+## ENVIRONMENT
+
+NODE_ENV= development
+
+## PORT NUMBER
+
+PORT= ** set you preferred port number **
+
+## MONGODB CONNECTION STRING
+
+** fill your username and password and dbname on the connection string **
+MONGO_URI = mongodb+srv://yourusername:yourpassword@cluster0.o0jimog.mongodb.net/databasename?retryWrites=true&w=majority&appName=Cluster0
+
+## MAIL SERVICE CONFIGURATION
+
+** get app password from gmail account and use it here
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=465
+MAIL_USER = ** you email **
+MAIL_PASS = ** you app password **
+MAIL_FROM = ** your email \*\*
+
+## JWT SECRET KEY
+
+JWT_SECRET = ** set your secret key for authentication**
