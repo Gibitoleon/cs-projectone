@@ -13,7 +13,7 @@ PORT= ** set you preferred port number **
 ## MONGODB CONNECTION STRING
 
 ** fill your username and password and dbname on the connection string **
-MONGO_URI = mongodb+srv://yourusername:yourpassword@cluster0.o0jimog.mongodb.net/databasename?retryWrites=true&w=majority&appName=Cluster0
+MONGO_URI = mongodb+srv://yourusername:yourpassword@cluster0.o0jimog.mongodb.net/PropertyManagement?retryWrites=true&w=majority&appName=Cluster0
 
 ## MAIL SERVICE CONFIGURATION
 
@@ -22,7 +22,7 @@ MAIL_HOST=smtp.gmail.com
 MAIL_PORT=465
 MAIL_USER = ** you email **
 MAIL_PASS = ** you app password **
-MAIL_FROM = ** your email \*\*
+MAIL_FROM = ** your email
 
 ## JWT SECRET KEY
 

@@ -6,7 +6,7 @@ const { StatusCodes } = require("http-status-codes");
 const { UserError } = require("../Errors/errors");
 const { AuthError } = require("../Errors/errors");
 const Jwtgenerator = require("../Utils/Jwt.generator");
-
+const MediaService = require("../Services/Media/Media");
 class AuthController {
   // Logic for login
   async Login(req, res) {
@@ -62,6 +62,7 @@ class AuthController {
     if (!user) {
       throw new UserError("User not found"); //if user is not found, throw an error
     }
+
     //check if the verification code is valid
     const { verificationcode } = req.params; //get the verification code from the params
     console.log(verificationcode);
@@ -105,6 +106,49 @@ class AuthController {
   async Logout(req, res) {
     Jwtgenerator.clearCookie(res); //clear the cookie
     return res.status(200).json({ message: "Logout successful" });
+  }
+
+  // update profile
+  async UpdateProfile(req, res) {
+    const currentuserid = req.user;
+    const user = await User.findById(currentuserid);
+    const { Firstname, Surname, Phonenumber, Password, OldPassword } = req.body;
+    if (Firstname && Validator.isValidName(Firstname)) {
+      user.Firstname = Firstname;
+    }
+    if (Surname && Validator.isValidName(Surname)) {
+      user.Surname = Surname;
+    }
+    if (Phonenumber && Validator.isValidPhoneNumber(Phonenumber)) {
+      user.Phonenumber = Phonenumber;
+    }
+    if (
+      Validator.isValidPassword(Password) &&
+      Validator.isValidPassword(OldPassword)
+    ) {
+      const isPasswordCorrect = await user.comparePassword(OldPassword);
+      if (!isPasswordCorrect) {
+        throw new AuthError(`Incorrect password.You cant reset your passwword`);
+      }
+      user.Password = Password;
+    }
+    await user.save();
+    return res.status(StatusCodes.OK).json({ message: "Update successfuly" });
+  }
+
+  async UpdateProfileImage(req, res) {
+    const currentuserid = req.user;
+    const user = await User.findById(currentuserid);
+    const { ProfileImg } = req.body;
+    if (ProfileImg) {
+      if (user.ProfileImg) {
+        await MediaService.deleteImage(user.ProfileImg);
+      }
+      const newprofileurl = await MediaService.uploadImage(ProfileImg);
+      user.ProfileImg = newprofileurl;
+      await user.save();
+      return res.status(StatusCodes.OK).json({ msg: "updated successfully" });
+    }
   }
 }
 

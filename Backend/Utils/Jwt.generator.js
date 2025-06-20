@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 class Jwtgenerator {
-  static generateToken(userId) {
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+  static generateToken(userid) {
+    const token = jwt.sign({ userid }, process.env.JWT_SECRET, {
       expiresIn: "1h", // Token expiration time
     });
     return token;
   }
-  static generateCookie(res, userId) {
-    const token = this.generateToken(userId); // Generate the JWT token
+  static generateCookie(res, userid) {
+    const token = this.generateToken(userid); // Generate the JWT token
     res.cookie("token", token, {
       httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
       secure: process.env.NODE_ENV !== "development", // Use secure cookies in production

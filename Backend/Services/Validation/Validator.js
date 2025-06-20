@@ -80,10 +80,11 @@ class Validator {
     return true;
   }
   static isValidPhoneNumber(phoneNumber) {
-    const safaricomLineRegex =
-      /^254(7(0[0-9]|1[0-9]|2[0-9]|4[0-9]|57|58|59|68|69))[0-9]{6}$/;
-    if (!safaricomLineRegex.test(phoneNumber)) {
-      throw new AuthError("Sorry,as per now we only support Safaricom lines");
+    const kenyanMobileRegex = /^2547\d{8}$/;
+    if (!kenyanMobileRegex.test(phoneNumber)) {
+      throw new AuthError(
+        "Please enter a valid Kenyan mobile number in the format 2547XXXXXXXX"
+      );
     }
     return true;
   }

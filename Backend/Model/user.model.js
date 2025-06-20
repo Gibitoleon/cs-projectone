@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bycrypt = require("bcryptjs");
 const { StatusCodes } = require("http-status-codes");
-const { AuthError } = require("../Errors/errors");
+const { AuthError, UserError } = require("../Errors/errors");
 const userSchema = new mongoose.Schema(
   {
     Email: {
@@ -31,8 +31,8 @@ const userSchema = new mongoose.Schema(
     },
     Role: {
       type: String,
-      default: "Tenant",
-      enum: ["Admin", "Tenant", "Landlord"],
+      default: "Student",
+      enum: ["Admin", "Student", "Staff"],
     },
     isEmailVerified: {
       type: Boolean,
@@ -57,6 +57,14 @@ userSchema.statics.findByEmail = async function (Email) {
   return await this.findOne({ Email });
 };
 
+userSchema.statics.findById = async function (id) {
+  const user = await this.findOne({ _id: id });
+  if (!user) {
+    throw new UserError("User not found"); //throwing an error if the user is not found
+  }
+  return user;
+};
+
 // before we creating our user a function to hash the password
 
 userSchema.pre("save", async function (next) {
@@ -76,7 +84,7 @@ userSchema.methods.comparePassword = async function (Password) {
 //method to create a new user
 
 userSchema.statics.CreateUser = async function (Email, Password) {
-  const user = this.create({ Email, Password }); //creating a new user
+  const user = await this.create({ Email, Password }); //creating a new user
   if (!user) {
     throw new AuthError("User not created", StatusCodes.INTERNAL_SERVER_ERROR); //throwing an error if the user is not created
   }
@@ -158,6 +166,11 @@ userSchema.statics.deleteUnverifiedUsers = async function (expiredTime) {
   } else {
     console.log("No unverified users found to delete");
   }
+};
+
+userSchema.statics.FindAdmin = async function () {
+  const Admins = await this.find({ Role: "Admin" });
+  return Admins;
 };
 const User = mongoose.model("User", userSchema); //creating a model using the schema
 module.exports = User; //exporting the model

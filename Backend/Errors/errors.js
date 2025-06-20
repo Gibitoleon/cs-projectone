@@ -20,4 +20,21 @@ class JobsError extends BaseError {
     super(message);
   }
 }
-module.exports = { AuthError, DatabaseError, UserError, JobsError };
+class ItemError extends BaseError {
+  constructor(message, statusCode = StatusCodes.NOT_FOUND) {
+    super(message, statusCode);
+  }
+}
+class CustomError extends BaseError {
+  constructor(message, statusCode = StatusCodes.INTERNAL_SERVER_ERROR) {
+    super(message, statusCode);
+  }
+}
+module.exports = {
+  AuthError,
+  DatabaseError,
+  UserError,
+  JobsError,
+  ItemError,
+  CustomError,
+};
