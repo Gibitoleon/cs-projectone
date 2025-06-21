@@ -13,7 +13,7 @@ class Validator {
 
     //validate password
     Validator.isValidPassword(Fields.Password);
-    Validator.isPasswordMatch(Fields.Password, Fields.PasswordConfirmation);
+    // Validator.isPasswordMatch(Fields.Password, Fields.PasswordConfirmation);
 
     return true;
   }
@@ -49,8 +49,10 @@ class Validator {
 
   //check for valid email format
   static isValidEmail(Email) {
+    const normalizedEmail = Email.toLowerCase().trim();
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(Email)) {
+    if (!emailRegex.test(normalizedEmail)) {
       throw new AuthError("Invalid email format");
     }
   }

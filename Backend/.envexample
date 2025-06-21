@@ -27,3 +27,11 @@ MAIL_FROM = ** your email
 ## JWT SECRET KEY
 
 JWT_SECRET = ** set your secret key for authentication**
+
+## CLOUDINARY
+
+## Cloudinary Configuration
+
+CLOUDNAME = ** THE CLOUD **
+API_SECRET = ** YOU API SECRET **
+API_KEY = ** YOUR API KEY **

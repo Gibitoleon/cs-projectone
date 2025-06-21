@@ -25,9 +25,9 @@ class AuthController {
 
   // Logic for signup
   async StartSignup(req, res) {
-    const { Email, Password, PasswordConfirmation } = req.body;
+    const { Email, Password } = req.body;
 
-    await Validator.ValidateSignup({ Email, Password, PasswordConfirmation }); //validation logic
+    await Validator.ValidateSignup({ Email, Password }); //validation logic
     const user = await User.CreateUser(Email, Password); //creating a new user
 
     //generate a verification code and  link  send it to user email
@@ -39,13 +39,12 @@ class AuthController {
     );
 
     await user.save(); //save the user to the database
-    const verificationLink = `http://localhost:${process.env.Port}/api/v1/auth/verification/${verificationCode}`; //
 
     //send the email to the user
     await Mail.sendMail(
       user.Email,
-      "Verification Code",
-      { verificationLink },
+      "VerificationCode",
+      verificationCode,
       "verification"
     );
     return res
@@ -55,8 +54,9 @@ class AuthController {
 
   // Logic for verification
   async Verification(req, res) {
-    const { Email } = req.body; //get the email from the body
+    const { Email, verificationcode } = req.body; //get the email from the body
 
+    console.log(req.body);
     //find the user by email
     const user = await User.findByEmail(Email);
     if (!user) {
@@ -64,7 +64,7 @@ class AuthController {
     }
 
     //check if the verification code is valid
-    const { verificationcode } = req.params; //get the verification code from the params
+    //get the verification code from the params
     console.log(verificationcode);
     await user.updateisEmailVerified(verificationcode);
 
@@ -77,7 +77,7 @@ class AuthController {
   async CollectProfileInfo(req, res) {
     const signingUser = req.user; //get the user from the request object
     const { Firstname, Surname, Phonenumber } = req.body; //get the profile info from the body
-
+    console.log(req.body);
     await Validator.RemainingValidation({ Firstname, Surname, Phonenumber }); //validation logic
 
     //validating the second stage of signup after email verification
@@ -87,19 +87,7 @@ class AuthController {
     signingUser.Phonenumber = Phonenumber;
     await signingUser.save();
 
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "Collect Profile Info successful" });
-  }
-
-  // Logic for completing signup
-  async CompleteSignup(req, res) {
-    const signingUser = req.user;
-    const { Role } = req.body;
-    await signingUser.updateRole(Role);
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: "Complete Signup successful" });
+    return res.status(StatusCodes.OK).json({ message: "Successful Signup" });
   }
 
   // Logic for logout

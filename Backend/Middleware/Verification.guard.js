@@ -13,6 +13,7 @@ class VerificationGuard {
     if (!signingUser.isUserVerified()) {
       throw new UserError("Email not verified", StatusCodes.UNAUTHORIZED); //if email is not verified, error
     }
+
     req.user = signingUser; //if user is found, assign the user to the request object
     next(); //call the next middleware
   }
@@ -46,8 +47,6 @@ class VerificationGuard {
     req.user = user; //if user is admin, assign the user to the request object
     next(); //if user is admin, call the next middleware
   }
-
-  
 }
 
 module.exports = new VerificationGuard(); //exporting the class instance

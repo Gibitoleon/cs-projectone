@@ -16,8 +16,9 @@ class Mail {
   }
   //function to render different templates that will be used to send emails
   async renderTemplate(templateName, data) {
+    console.log(data);
     const filepath = path.join(__dirname, "Templates", `${templateName}.ejs`);
-    const template = await ejs.renderFile(filepath, data);
+    const template = await ejs.renderFile(filepath, { data });
     return template;
   }
 

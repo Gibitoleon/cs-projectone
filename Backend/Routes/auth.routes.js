@@ -8,17 +8,12 @@ const VerificationGuard = require("../Middleware/Verification.guard"); //importi
 router.post("/login", AuthController.Login); //login route
 router.post("/startsignup", AuthController.StartSignup); //start signup route
 router.post(
-  "/collectprofileinfo",
+  "/completesignup",
   VerificationGuard.emailVerifyGuard,
   AuthController.CollectProfileInfo
 ); //collect profile info route
-router.post(
-  "/completesignup",
-  VerificationGuard.emailVerifyGuard,
-  AuthController.CompleteSignup
-); //complete signup route
 
-router.post("/verification/:verificationcode", AuthController.Verification); //verification route
+router.post("/verification", AuthController.Verification); //verification route
 router.post("/logout", AuthController.Logout); //loGout route
 
 router.patch("/updateprofile", AuthController.UpdateProfile);

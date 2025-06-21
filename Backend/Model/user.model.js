@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
     },
     Password: {
       type: String,
@@ -113,7 +114,7 @@ userSchema.methods.generateVerificationCodeExpiry = function () {
 //check if verification code is valid
 
 userSchema.methods.isVerificationCodeValid = function (verificationcode) {
-  return this.verificationCode === verificationcode; //checking if the verification code is valid
+  return this.verificationCode === verificationcode.trim(); //checking if the verification code is valid
 };
 
 //method to check if code  has expired

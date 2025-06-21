@@ -5,7 +5,7 @@ require("dotenv").config(); //load environment variables from .env file
 const express = require("express"); //for creating server
 const cookieparser = require("cookie-parser"); //for parsing cookies
 const { v2: cloudinary } = require("cloudinary"); //for uploading images to cloudinary
-
+const cors = require("cors");
 const { app, server } = require("./ServerConfig/server.config"); //requiring our configured server
 
 //requiring Routes
@@ -30,6 +30,13 @@ const ConnectDb = require("./Dbconnection/Connect"); //importing the database co
 //middleware
 
 // middleware configuration
+//cors middleware
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Your frontend URL
+    credentials: true, // Allow cookies, if needed
+  })
+);
 app.use(express.json()); //parse incoming JSON requests
 app.use(cookieparser()); //parse cookies from incoming requests
 
