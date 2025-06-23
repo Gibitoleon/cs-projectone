@@ -11,8 +11,8 @@ class AuthController {
   // Logic for login
   async Login(req, res) {
     const { Email, Password } = req.body; //get the email and password from the body
-    const user = await User.findByEmail(Email); //find the user by email
-
+    console.log(req.body);
+    const user = await User.findOne({ Email });
     const isPasswordCorrect = user && (await user.comparePassword(Password)); //compare the password with the hashed password
     if (!user || !isPasswordCorrect) {
       throw new AuthError("Invalid credentials"); //if the user is not found or the password is incorrect, throw an error
@@ -20,7 +20,15 @@ class AuthController {
     //generate a jwt token and send it to the user
     const userid = user._id.toString(); //get the user id
     Jwtgenerator.generateCookie(res, userid);
-    return res.status(200).json({ message: "Login successful" });
+    const Authuser = {
+      _id: user._id,
+      Email: user.Email,
+      Firstname: user.Firstname,
+      Surname: user.Surname,
+      Phonenumber: user.Phonenumber,
+      ProfileImg: user.ProfileImg,
+    }; //create an object with the user information
+    return res.status(200).json({ message: "Login successful", Authuser });
   }
 
   // Logic for signup
@@ -99,8 +107,10 @@ class AuthController {
   // update profile
   async UpdateProfile(req, res) {
     const currentuserid = req.user;
+    console.log(currentuserid);
     const user = await User.findById(currentuserid);
     const { Firstname, Surname, Phonenumber, Password, OldPassword } = req.body;
+    console.log(req.body);
     if (Firstname && Validator.isValidName(Firstname)) {
       user.Firstname = Firstname;
     }
@@ -110,23 +120,43 @@ class AuthController {
     if (Phonenumber && Validator.isValidPhoneNumber(Phonenumber)) {
       user.Phonenumber = Phonenumber;
     }
-    if (
-      Validator.isValidPassword(Password) &&
-      Validator.isValidPassword(OldPassword)
-    ) {
-      const isPasswordCorrect = await user.comparePassword(OldPassword);
-      if (!isPasswordCorrect) {
-        throw new AuthError(`Incorrect password.You cant reset your passwword`);
+    if (Password || OldPassword) {
+      if (!OldPassword || !OldPassword) {
+        throw new Customerror(
+          `Please provide both old and updated password`,
+          StatusCodes.BAD_REQUEST
+        );
+      } else {
+        console.log("Entering password update logic...");
+        const isPasswordCorrect = await user.comparePassword(OldPassword);
+        console.log(`Ispasswordcorrect ${isPasswordCorrect}`);
+        if (!isPasswordCorrect) {
+          throw new AuthError(
+            `Incorrect password.You cant reset your passwword`
+          );
+        }
+        if (Validator.isValidPassword(Password)) {
+          user.Password = Password;
+        }
       }
-      user.Password = Password;
     }
     await user.save();
-    return res.status(StatusCodes.OK).json({ message: "Update successfuly" });
+    const updatedAuthuser = {
+      _id: user._id,
+      Email: user.Email,
+      Firstname: user.Firstname,
+      Surname: user.Surname,
+      Phonenumber: user.Phonenumber,
+      ProfileImg: user.ProfileImg,
+    };
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Update successfuly", updatedAuthuser });
   }
 
   async UpdateProfileImage(req, res) {
     const currentuserid = req.user;
-    const user = await User.findById(currentuserid);
+    const user = await User.findOne({ _id: currentuserid });
     const { ProfileImg } = req.body;
     if (ProfileImg) {
       if (user.ProfileImg) {
@@ -135,8 +165,22 @@ class AuthController {
       const newprofileurl = await MediaService.uploadImage(ProfileImg);
       user.ProfileImg = newprofileurl;
       await user.save();
-      return res.status(StatusCodes.OK).json({ msg: "updated successfully" });
+      return res.status(StatusCodes.OK).json({
+        msg: "profile updated successfully",
+        ProfileImg: user.ProfileImg,
+      });
     }
+  }
+  async GetProfile(req, res) {
+    const currentuserid = req.user;
+    const user = await User.findOne({ _id: currentuserid }).select(
+      "Email Firstname Surname Phonenumber ProfileImg"
+    );
+    if (!user) {
+      throw new UserError("User not found");
+    }
+    S;
+    return res.status(StatusCodes.OK).json(user);
   }
 }
 

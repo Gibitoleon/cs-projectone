@@ -21,7 +21,7 @@ export const CompleteSignUp = () => {
         timer: 3000,
         timerProgressBar: true,
       });
-      useSignupStore.persist.clearStorage();
+      localStorage.removeItem("signup-storage");
       navigate("/login");
     },
     onError: (error) => {

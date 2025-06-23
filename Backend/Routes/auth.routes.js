@@ -16,7 +16,21 @@ router.post(
 router.post("/verification", AuthController.Verification); //verification route
 router.post("/logout", AuthController.Logout); //loGout route
 
-router.patch("/updateprofile", AuthController.UpdateProfile);
-router.patch("/updateprofileImage", AuthController.UpdateProfileImage);
+router.patch(
+  "/updateprofile",
+  VerificationGuard.jwtVerifyGuard,
+  AuthController.UpdateProfile
+);
+router.patch(
+  "/updateprofileImage",
+  VerificationGuard.jwtVerifyGuard,
+  AuthController.UpdateProfileImage
+);
+
+router.get(
+  "/getprofile",
+  VerificationGuard.jwtVerifyGuard,
+  AuthController.GetProfile
+); //get profile route
 
 module.exports = router;

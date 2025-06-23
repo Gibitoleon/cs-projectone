@@ -1,4 +1,5 @@
 const User = require("../Model/user.model"); //importing the user model
+
 const MediaService = require("../Services/Media/Media.js"); //importing the media service for handling image uploads
 
 const Item = require("../Model/item.model");
@@ -6,13 +7,17 @@ const Notification = require("../Model/notification.model.js");
 
 const { StatusCodes } = require("http-status-codes");
 const Fetchapi = require("../Utils/Axios.js"); //importing the fetch api utility for making external requests
+const { ItemError } = require("../Errors/errors.js");
 
 class ItemController {
   async UploadFoundItem(req, res) {
     const currentuserid = req.user; //get the user id from the request object
     const { ItemName, Category, Description, Imageurl, Locationfound } =
       req.body; //get the item details from the body
-    const user = await User.findById(currentuserid); //check if the user exists and select the id field
+    if (!ItemName || !Category || !Description || !Imageurl || !Locationfound) {
+      throw new ItemError("All fields are required", StatusCodes.BAD_REQUEST);
+    }
+    const user = await User.findOne({ _id: currentuserid }); //check if the user exists and select the id field
     const itemtosave = {
       ItemName,
       Category,

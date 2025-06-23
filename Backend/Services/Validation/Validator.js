@@ -64,6 +64,7 @@ class Validator {
         "Password must be  8+ characters  at least one letter and one number"
       );
     }
+    return true;
   }
   static isPasswordMatch(Password, PasswordConfirmation) {
     if (Password !== PasswordConfirmation) {

@@ -4,7 +4,7 @@ import { useSignupStore } from "../../../Stores/useSignupStore";
 import { StartSignUp } from "./Step1";
 import { VerificationPage } from "./Step2";
 import { CompleteSignUp } from "./Step3";
-
+import "../../../css/login.css";
 export const Signup = () => {
   const { step } = useSignupStore();
 

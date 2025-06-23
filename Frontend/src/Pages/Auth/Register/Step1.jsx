@@ -68,9 +68,9 @@ export const StartSignUp = () => {
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
-              <Eye size={18} className="text-gray-500" />
-            ) : (
               <EyeOff size={18} className="text-gray-500" />
+            ) : (
+              <Eye size={18} className="text-gray-500" />
             )}
           </button>
         </div>

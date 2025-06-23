@@ -13,7 +13,7 @@ class MediaService {
   }
   async uploadImage(image) {
     try {
-      const uploadResponse = await cloudinary.uploader.upload(image);
+      const uploadResponse = await cloudinary.uploader.upload(image); // Specify the folder where the image will be uploaded);
       const Imageurl = uploadResponse.secure_url; // Get the secure URL of the uploaded image
       return Imageurl;
     } catch (error) {

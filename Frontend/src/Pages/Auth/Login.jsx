@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import "../../css/login.css";
 
 import useCustommutation from "../../Customhooks/useMutation";
 import { useLoginStore } from "../../Stores/useLoginStore";
@@ -8,16 +10,22 @@ import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 export const Login = () => {
+  const navigate = useNavigate();
   const showPassword = useSignupStore((state) => state.showPassword);
   const togglePasswordVisibility = useSignupStore(
     (state) => state.togglePasswordVisibility
   );
   const handleChange = useLoginStore((state) => state.handleChange);
   const getLoginData = useLoginStore((state) => state.getLoginData);
+  const setAuthUser = useLoginStore((state) => state.setauthUser);
   const mutation = useCustommutation({
     onSuccess: (data) => {
-      const { message } = data;
+      const { message, Authuser } = data;
+      console.log(Authuser);
       toast.success(message);
+      setAuthUser(Authuser);
+
+      navigate("/Search");
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message);
@@ -76,9 +84,9 @@ export const Login = () => {
                   onClick={() => togglePasswordVisibility()}
                 >
                   {showPassword ? (
-                    <Eye size={18} className="text-gray-500" />
-                  ) : (
                     <EyeOff size={18} className="text-gray-500" />
+                  ) : (
+                    <Eye size={18} className="text-gray-500" />
                   )}
                 </button>
               </div>

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const bycrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
+
 const { StatusCodes } = require("http-status-codes");
 const { AuthError, UserError } = require("../Errors/errors");
 const userSchema = new mongoose.Schema(
@@ -70,8 +71,8 @@ userSchema.statics.findById = async function (id) {
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("Password")) {
-    const salt = await bycrypt.genSalt(10); //generating a salt
-    this.Password = await bycrypt.hash(this.Password, salt); //hashing the password with the salt
+    const salt = await bcrypt.genSalt(10); //generating a salt
+    this.Password = await bcrypt.hash(this.Password, salt); //hashing the password with the salt
   }
   next(); //calling the next middleware
 });
@@ -79,7 +80,8 @@ userSchema.pre("save", async function (next) {
 //method to compare the password with the hashed password
 
 userSchema.methods.comparePassword = async function (Password) {
-  return await bycrypt.compare(Password, this.Password); //comparing the password with the hashed password
+  return await bcrypt.compare(Password, this.Password);
+  //comparing the password with the hashed password
 };
 
 //method to create a new user
