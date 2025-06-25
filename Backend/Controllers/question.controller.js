@@ -51,7 +51,12 @@ class QuestionController {
 
     console.log(Itemid);
 
-    const item = await Item.findById(Itemid).populate("Questions");
+    const item = await Item.findById(Itemid)
+      .select(
+        "_id ItemName Category Description Imageurl Locationfound Questions createdAt"
+      )
+      .populate("Questions");
+
     console.log(item);
     return res
       .status(StatusCodes.OK)

@@ -18,10 +18,10 @@ def vectorize_image():
     data = request.get_json()
 
     # Validate input
-    if not data or 'Image_url' not in data:
+    if not data or 'Imageurl' not in data:
         return jsonify({"error": "Missing 'image_url' in request"}), 400
 
-    Image_url = data['Image_url']
+    Image_url = data['Imageurl']
 
     try:
         # Download image from the URL
@@ -42,14 +42,16 @@ def vectorize_image():
 
     return jsonify({"vector": vector})
 
+
 @app.route('/text-vectorize', methods=['POST'])
 def vectorize_text():
     data = request.get_json()
     if not data or 'text' not in data:
         return jsonify({"error": "Missing 'text' in request"}), 400
 
-    text = data['text']
-    text_tokens = clip.tokenize([text]).to(device)
+    text = data['text'].strip()
+    prompt = "a photo of a " + text
+    text_tokens = clip.tokenize([prompt]).to(device)
 
     with torch.no_grad():
         text_features = model.encode_text(text_tokens)

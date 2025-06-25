@@ -39,6 +39,7 @@ class VerificationGuard {
   }
 
   async authorizeAdmin(req, res, next) {
+    console.log("authorizeAdmin middleware hit");
     const userid = req.user;
     const user = await User.findById(userid);
     if (user.Role !== "Admin") {

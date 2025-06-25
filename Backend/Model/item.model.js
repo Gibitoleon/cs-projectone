@@ -125,9 +125,6 @@ itemSchema.statics.findIdAndUpdate = async function (itemid, updateData) {
 itemSchema.statics.searchVector = async function (textvector, k = 1) {
   const results = await this.aggregate([
     {
-      $match: { Status: "approved", isVerificationQuestionSet: true },
-    },
-    {
       $vectorSearch: {
         index: "Vector_Search",
         path: "Vector",
@@ -135,6 +132,9 @@ itemSchema.statics.searchVector = async function (textvector, k = 1) {
         limit: k,
         numCandidates: 100,
       },
+    },
+    {
+      $match: { Status: "approved", isVerificationQuestionSet: true },
     },
     {
       $addFields: {

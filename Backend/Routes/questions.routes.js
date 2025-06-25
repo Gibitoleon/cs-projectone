@@ -10,7 +10,7 @@ router.post(
 
 // sending the questions to the claimants for an answer
 router.get(
-  "/getverificationquestions/Claimant/:Claimid/Item/:Itemid",
+  "/getverificationquestions/Item/:Itemid",
   QuestionController.GetVerificationQuestions
 );
 

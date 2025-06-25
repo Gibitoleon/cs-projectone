@@ -65,7 +65,7 @@ class ClaimController {
     });
     return res
       .status(StatusCodes.CREATED)
-      .json({ msg: `claimed successfully` });
+      .json({ message: `claimed successfully` });
   }
 
   async GetClaimsForItemFinder(req, res) {

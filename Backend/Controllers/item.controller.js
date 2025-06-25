@@ -56,88 +56,117 @@ class ItemController {
   }
 
   async ApproveUploadedItem(req, res) {
-    const currentAdminuser = req.user._id;
-    const { Itemid } = req.params; //get the item id from the request parameters
-    const { Status } = req.body; //get the status from the body
+    console.log("ApproveUploadedItem endpoint hit");
+    try {
+      const currentAdminuser = req.user._id;
+      const { Itemid } = req.params; //get the item id from the request parameters
+      const { Status } = req.body; //get the status from the body
 
-    const item = await Item.findIdAndUpdate(Itemid, {
-      Status,
-      ReviewedBy: currentAdminuser,
-      ReviewedAt: new Date(),
-    }); //update the item with the new status and approved by user
+      const item = await Item.findIdAndUpdate(Itemid, {
+        Status,
+        ReviewedBy: currentAdminuser,
+        ReviewedAt: new Date(),
+      }); //update the item with the new status and approved by user
 
-    if (item.Status !== "approved") {
-      // Send a notification to the user who uploaded the item the reason for rejection and next course of action
+      if (item.Status !== "approved") {
+        // Send a notification to the user who uploaded the item the reason for rejection and next course of action
+        const notification = await Notification.create({
+          to: item.Foundby,
+          message: `Your item ${item.ItemName} was rejected. Please follow up with our office`,
+        });
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ message: "Item not approved" });
+      }
+
+      //upload the image to cloudinary and get the image url
+      const Imageurl = await MediaService.uploadImage(item.Imageurl);
+
+      //Send the image url to the python microservice for vectorization
+      const { vector } = await Fetchapi.Fetch("/vectorize", "POST", {
+        Imageurl,
+      });
+      console.log(Imageurl, vector); //log the response from the python microservice
+
+      //update the item with the image url and vector data
+      await Item.findByIdAndUpdate(Itemid, {
+        Imageurl,
+        Vector: vector, //assuming the python service returns vector data
+      });
+
+      // send a notification to the client that the item has been approved
       const notification = await Notification.create({
+        from: currentAdminuser._id,
         to: item.Foundby,
-        message: `Your item ${item.ItemName} was rejected. Please follow up with our office`,
+        message: `Your item ${item.ItemName} was successfully uploaded`,
       });
       return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Item not approved" });
+        .status(200)
+        .json({ message: "Approve Uploaded Item endpoint hit" });
+    } catch (error) {
+      console.log("error in ApproveUploadedItem:", error);
+      return res
+        .status(500)
+        .json({ message: "Server error", error: error.message });
     }
-
-    //upload the image to cloudinary and get the image url
-    const Imageurl = await MediaService.uploadImage(item.Imageurl);
-
-    //Send the image url to the python microservice for vectorization
-    const { vector } = await Fetchapi.Fetch("/vectorize", "POST", { Imageurl });
-    console.log(Imageurl, data); //log the response from the python microservice
-
-    //update the item with the image url and vector data
-    await Item.findIdAndUpdate(Itemid, {
-      Imageurl,
-      VectorData: vector, //assuming the python service returns vector data
-    });
-
-    // send a notification to the client that the item has been approved
-    const notification = await Notification.create({
-      from: currentAdminuser._id,
-      to: item.Foundby,
-      message: `Your item ${item.ItemName} was successfully uploaded`,
-    });
-    return res
-      .status(200)
-      .json({ message: "Approve Uploaded Item endpoint hit" });
   }
-
   async SearchFoundItem(req, res) {
     const { ItemName, Category, Description } = req.query;
-    let queryObject = {};
-    if (Category) {
-      queryObject.Category = Category;
-    }
+    let results = [];
+
+    // Case 1: Vector search by ItemName
     if (ItemName) {
       const { vector } = await Fetchapi.TextVectorFetch(ItemName);
-      const matchingItems = await Item.searchVector(vector);
-      return res.status(StatusCodes.OK).json({
-        message: "Search by ItemName",
-        data: matchingItems,
+      results = await Item.searchVector(vector); // e.g. your Pinecone, Weaviate, etc.
+
+      // Optional: filter by category if selected
+      if (Category && Category !== "AllCategories") {
+        results = results.filter((item) => item.Category === Category);
+      }
+
+      return res.status(200).json({
+        msg: "Search by ItemName",
+        data: results,
       });
     }
 
-    // Vector search by Description
+    // Case 2: Vector search by Description
     if (Description) {
       const { vector } = await Fetchapi.TextVectorFetch(Description);
-      const matchingItems = await Item.vectorSearch(vector, 10);
+      results = await Item.searchVector(vector);
+
+      if (Category && Category !== "AllCategories") {
+        results = results.filter((item) => item.Category === Category);
+      }
+
       return res.status(200).json({
-        message: "Search by Description",
-        data: matchingItems,
+        msg: "Search by Description",
+        data: results,
       });
     }
 
-    const items = await Item.find({
-      ...queryObject,
+    // Case 3: No vector search, just Category or all items
+    const filter = {
       isVerificationQuestionSet: true,
-      Status: `approved`,
-    })
-      .select("ItemName Category Imageurl Locationfound createdAt")
+      Status: "approved",
+    };
+
+    if (Category && Category !== "AllCategories") {
+      filter.Category = Category;
+    }
+
+    const items = await Item.find(filter)
+      .select("ItemName Category Imageurl Description Locationfound createdAt")
       .sort({ createdAt: -1 });
 
-    return res.status(StatusCodes.OK).json({ msg: "found items", data: items });
+    return res.status(200).json({
+      msg: "Filtered by category or all items",
+      data: items,
+    });
   }
 
   async AdminGetAllItems(req, res) {
+    console.log("AdminGetAllItems endpoint hit");
     const { isEscalated, Status } = req.query;
     let queryObject = {};
     if (isEscalated === "true") {
@@ -146,8 +175,11 @@ class ItemController {
     if (Status) {
       queryObject.Status = Status;
     }
-    const escalatedItems = await Item.find(queryObject);
-    return escalatedItems;
+    const Items = await Item.find(queryObject);
+    res.status(StatusCodes.OK).json({
+      message: "All items for admin",
+      data: Items,
+    });
   }
 }
 
