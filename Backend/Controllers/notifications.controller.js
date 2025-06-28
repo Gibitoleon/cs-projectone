@@ -3,7 +3,9 @@ const Notification = require("../Model/notification.model");
 class NotificationController {
   async GetAllNotifications(req, res) {
     const currentuserid = req.user;
-    const allnotifications = await Notification.find({ to: currentuserid });
+    const allnotifications = await Notification.find({
+      to: currentuserid,
+    }).sort({ createdAt: -1 });
     return res
       .status(StatusCodes.OK)
       .json({ msg: "Get all Notifications", data: allnotifications });
@@ -11,10 +13,14 @@ class NotificationController {
 
   async MarkNotificationAsRead(req, res) {
     const { notificationid } = req.params;
-    await Notification.findByIdAndUpdate(notificationid, {
-      read: true,
-    });
-    return res.status(StatusCodes.OK).json({ msg: "updated" });
+    const notification = await Notification.findByIdAndUpdate(
+      notificationid,
+      { read: true },
+      { new: true }
+    );
+    return res
+      .status(StatusCodes.OK)
+      .json({ msg: "updated", link: notification.link });
   }
 
   async CreateNotification(req, res) {

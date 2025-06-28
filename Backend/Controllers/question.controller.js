@@ -6,24 +6,26 @@ const { UserError, CustomError, ItemError } = require("../Errors/errors");
 
 class QuestionController {
   async UploadVerificationQuestion(req, res) {
+    console.log("upload verification question endpoint hit.....");
     const currentuserid = req.user;
     const { Itemid } = req.params;
     const { Questions } = req.body;
 
     // console.log(Questions);
+
     const item = await Item.FindItem({
       _id: Itemid,
       Status: "approved",
-      isVerificationQuestionSet: false,
+      /* isVerificationQuestionSet: false,*/
     });
 
-    if (!item.isMatchingId(item.Foundby.toString(), currentuserid)) {
+    if (!item.isMatchingId(item.Foundby, currentuserid)) {
       throw new UserError(
         ` Your are not the founder of this item`,
         StatusCodes.BAD_REQUEST
       );
     }
-    // console.log(item);
+
     //create the question
     const questionpromises = Questions.map((question) => {
       return Question.createQuestion({

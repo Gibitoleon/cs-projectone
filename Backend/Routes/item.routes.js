@@ -28,4 +28,5 @@ router.get(
   ItemController.AdminGetAllItems
 );
 
+router.patch("/escalateitem/:Itemid", ItemController.EscalateItem);
 module.exports = router;

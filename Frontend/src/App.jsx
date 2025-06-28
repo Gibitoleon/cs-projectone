@@ -22,22 +22,18 @@ function App() {
     <div className="app">
       {authuser && <Sidebar />}
 
-      {/* Your existing routes/content */}
+      {/*  my frontend routes */}
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/search" element={<LostItemsPage />} />
-        <Route path="/claimpage" element={<ClaimPage />} />
+        <Route path="/claimpage/:itemId" element={<ClaimPage />} />
         <Route path="/finderdashboard" element={<FinderDashboard />} />
         <Route path="/finder/item/:itemId" element={<ItemDetailsPage />} />
         <Route path="/myclaims" element={<MyClaimsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/notifications" element={<NotificationPage />} />
-
-        {/* Add more routes as needed */}
       </Routes>
-
-      {/* Other pages/routes */}
 
       <Toaster />
     </div>

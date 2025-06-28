@@ -2,6 +2,7 @@
   padding: 32px;
   background-color: #f9fafb;
   overflow-y: auto;
+  flex: 1;
 }
 
 .claim-header {

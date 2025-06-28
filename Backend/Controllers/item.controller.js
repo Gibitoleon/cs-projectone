@@ -8,6 +8,7 @@ const Notification = require("../Model/notification.model.js");
 const { StatusCodes } = require("http-status-codes");
 const Fetchapi = require("../Utils/Axios.js"); //importing the fetch api utility for making external requests
 const { ItemError } = require("../Errors/errors.js");
+const mongoose = require("mongoose");
 
 class ItemController {
   async UploadFoundItem(req, res) {
@@ -46,17 +47,27 @@ class ItemController {
   }
 
   async GetAllFounderItems(req, res) {
-    const { Status } = req.query;
     const currentuserid = req.user;
-    const FounderItems = await Item.find({ Foundby: currentuserid, Status });
+    const { Status } = req.query;
 
+    let queryObject = {};
+    if (Status) {
+      queryObject.Status = Status;
+    }
+    const FounderItems = await Item.find({
+      Foundby: currentuserid,
+      ...queryObject,
+    })
+      .select(
+        "ItemName Category Imageurl Description Locationfound createdAt Status"
+      )
+      .sort({ createdAt: -1 });
     return res
       .status(StatusCodes.OK)
       .json({ message: "my uploaded Items", data: FounderItems });
   }
 
   async ApproveUploadedItem(req, res) {
-    console.log("ApproveUploadedItem endpoint hit");
     try {
       const currentAdminuser = req.user._id;
       const { Itemid } = req.params; //get the item id from the request parameters
@@ -73,6 +84,7 @@ class ItemController {
         const notification = await Notification.create({
           to: item.Foundby,
           message: `Your item ${item.ItemName} was rejected. Please follow up with our office`,
+          link: `/finder/item/${item._id}`,
         });
         return res
           .status(StatusCodes.BAD_REQUEST)
@@ -99,6 +111,7 @@ class ItemController {
         from: currentAdminuser._id,
         to: item.Foundby,
         message: `Your item ${item.ItemName} was successfully uploaded`,
+        link: `finder/item/${item._id}`,
       });
       return res
         .status(200)
@@ -166,7 +179,6 @@ class ItemController {
   }
 
   async AdminGetAllItems(req, res) {
-    console.log("AdminGetAllItems endpoint hit");
     const { isEscalated, Status } = req.query;
     let queryObject = {};
     if (isEscalated === "true") {
@@ -180,6 +192,53 @@ class ItemController {
       message: "All items for admin",
       data: Items,
     });
+  }
+
+  async EscalateItem(req, res) {
+    const currentuserid = req.user;
+    const { Itemid } = req.params;
+
+    const session = await mongoose.startSession();
+    try {
+      session.startTransaction();
+
+      const item = await Item.findOne({ _id: Itemid }).session(session);
+      if (!item) throw new UserError("Item not found", 404);
+
+      if (!item.isMatchingId(item.Foundby, currentuserid)) {
+        throw new UserError("You cannot escalate this item", 403);
+      }
+
+      if (item.isEscalated) {
+        throw new UserError("This item is already escalated", 400);
+      }
+
+      await Item.findByIdAndUpdate(
+        Itemid,
+        { isEscalated: true },
+        { session, runValidators: true }
+      );
+
+      const admins = await User.find({ Role: "Admin" }).session(session);
+      const notifications = admins.map((admin) => ({
+        to: admin._id,
+        message: `Item "${item.ItemName}" has been escalated.`,
+        type: "item",
+        item: item._id,
+      }));
+
+      await Notification.insertMany(notifications, { session });
+
+      await session.commitTransaction();
+      return res.status(200).json({ message: "Item escalated successfully." });
+    } catch (err) {
+      await session.abortTransaction();
+      return res.status(err.statusCode || 500).json({
+        message: err.message || "Failed to escalate item",
+      });
+    } finally {
+      session.endSession();
+    }
   }
 }
 

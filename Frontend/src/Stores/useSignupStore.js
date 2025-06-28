@@ -21,7 +21,21 @@ export const useSignupStore = create(
         }),
       resetOtp: () => set({ otp: ["", "", "", "", "", ""] }),
 
+      resetForm: () => {
+        set(() => ({
+          step: 1,
+          Email: "",
+          Password: "",
+          Firstname: "",
+          Surname: "",
+          Phonenumber: "",
+          showPassword: false,
+          otp: ["", "", "", "", "", ""],
+        }));
+      },
+
       gotoStep: (n) => set(() => ({ step: n })),
+      resetStep: () => set(() => ({ step: 1 })),
 
       togglePasswordVisibility: () =>
         set((state) => ({ showPassword: !state.showPassword })),

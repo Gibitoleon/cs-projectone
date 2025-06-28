@@ -9,6 +9,8 @@ import Swal from "sweetalert2";
 export const CompleteSignUp = () => {
   const handleChange = useSignupStore((state) => state.handleChange);
   const getStepData = useSignupStore((state) => state.getStepData);
+  const resetStep = useSignupStore((state) => state.resetStep);
+  const resetForm = useSignupStore((state) => state.resetForm);
   const navigate = useNavigate();
 
   const mutation = useCustommutation({
@@ -21,7 +23,7 @@ export const CompleteSignUp = () => {
         timer: 3000,
         timerProgressBar: true,
       });
-      localStorage.removeItem("signup-storage");
+      resetForm();
       navigate("/login");
     },
     onError: (error) => {

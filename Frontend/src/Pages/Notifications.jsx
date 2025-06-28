@@ -1,39 +1,49 @@
 import { useState } from "react";
 import { Bell } from "lucide-react";
 import "../css/Notification.css";
+import { useCustomQuery } from "../Customhooks/useQuery";
 
-const sampleNotifications = [
-  {
-    id: 1,
-    title: "Claim Approved",
-    message: "Your claim on 'Designer Leather Wallet' has been approved.",
-    timestamp: "2 hours ago",
-    read: false,
-  },
-  {
-    id: 2,
-    title: "Item Status Update",
-    message:
-      "Your uploaded item 'Ray-Ban Sunglasses' is now marked as Approved.",
-    timestamp: "1 day ago",
-    read: true,
-  },
-  {
-    id: 3,
-    title: "New Claim Received",
-    message: "Someone has submitted a claim on your item 'USB Flash Drive'.",
-    timestamp: "3 days ago",
-    read: false,
-  },
-];
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+
+import useProgressBar from "../Customhooks/useProgressbar";
+import useCustommutation from "../Customhooks/useMutation";
+
+import getRelativeTime from "../Utils/time";
 
 const NotificationPage = () => {
-  const [notifications, setNotifications] = useState(sampleNotifications);
+  const navigate = useNavigate();
+  useProgressBar();
+  const {
+    data: Notifications,
+    isFetching,
+    error,
+  } = useCustomQuery(`getnotifications`, `/notifications/getallNotifications`);
 
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const queryClient = useQueryClient();
+
+  console.log(Notifications);
+  const mutation = useCustommutation({
+    onSuccess: (data) => {
+      const { link } = data;
+      console.log(link);
+      queryClient.invalidateQueries({
+        queryKey: ["getnotifications"],
+      });
+      queryClient.invalidateQueries("claimItem");
+      navigate(link);
+    },
+    onError: (error) => {
+      console.log(error?.response?.data?.message);
+    },
+  });
+
+  const handleClick = (e, notificationid) => {
+    e.preventDefault();
+    mutation.mutate({
+      url: `/notifications/markasRead/${notificationid}`,
+      method: `PATCH`,
+    });
   };
 
   return (
@@ -43,19 +53,25 @@ const NotificationPage = () => {
       </h2>
 
       <div className="notifications-list">
-        {notifications.map((note) => (
+        {Notifications?.data?.map((notification) => (
           <div
-            key={note.id}
-            className={`notification-card ${note.read ? "read" : "unread"}`}
-            onClick={() => markAsRead(note.id)}
+            key={notification?._id}
+            className={`notification-card ${
+              notification?.read ? "read" : "unread"
+            }`}
+            onClick={(e) => {
+              handleClick(e, notification?._id);
+            }}
           >
-            <h4>{note.title}</h4>
-            <p>{note.message}</p>
-            <span className="timestamp">{note.timestamp}</span>
-            {!note.read && <span className="new-badge">New</span>}
+            <h4>{notification?.type}</h4>
+            <p>{notification?.message}</p>
+            <span className="timestamp">
+              {getRelativeTime(notification?.createdAt)}
+            </span>
+            {!notification?.read && <span className="new-badge">New</span>}
           </div>
         ))}
-        {notifications.length === 0 && (
+        {Notifications?.data?.length === 0 && (
           <p className="empty">No notifications yet.</p>
         )}
       </div>

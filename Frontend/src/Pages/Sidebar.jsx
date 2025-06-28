@@ -1,9 +1,11 @@
 import { Search, Box, ClipboardList, Home } from "lucide-react";
+
 import { FaRegUser } from "react-icons/fa";
 import { TbLogout2 } from "react-icons/tb";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useCustomQuery } from "../Customhooks/useQuery";
+
 import useCustommutation from "../Customhooks/useMutation";
 import { useLoginStore } from "../Stores/useLoginStore";
 import { toast } from "react-hot-toast";
@@ -14,9 +16,25 @@ export const Sidebar = ({ user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(true);
   const setAuthUser = useLoginStore((state) => state.setauthUser);
   const authuser = useLoginStore((state) => state.authuser);
-  console.log("Auth User in Sidebar:", authuser.ProfileImg);
+  console.log(authuser?._id);
 
   const navigate = useNavigate();
+
+  const {
+    data: Notifications,
+    isFetching,
+    error,
+  } = useCustomQuery(`getnotifications`, `/notifications/getallNotifications`);
+
+  console.log(Notifications);
+
+  const unreadCount =
+    (authuser &&
+      Notifications?.data?.filter((n) => !n.read && n.to === authuser._id)
+        ?.length) ||
+    0;
+  console.log(unreadCount);
+
   const mutation = useCustommutation({
     onSuccess: (data) => {
       const { message } = data;
@@ -57,9 +75,13 @@ export const Sidebar = ({ user, onLogout }) => {
             <span className="nav-text">My Claims</span>
           </Link>
 
-          <Link to="/notifications" className="nav-item">
+          {/*  Notification link with unread badge */}
+          <Link to="/notifications" className="nav-item notification-nav">
             <Search size={24} className="nav-icon" />
             <span className="nav-text">Notifications</span>
+            {unreadCount > 0 && (
+              <span className="notification-count">{unreadCount}</span>
+            )}
           </Link>
 
           <Link to="/profile" className="nav-item">

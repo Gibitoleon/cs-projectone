@@ -62,6 +62,7 @@ class ClaimController {
       to: item.Foundby,
       message: `A claim has been raised for Item ${item.ItemName}`,
       type: "claim",
+      link: `/finder/item/${item._id}`,
     });
     return res
       .status(StatusCodes.CREATED)
@@ -158,6 +159,7 @@ class ClaimController {
               to: claim.User, // Make sure this is just the ID, not the session
               message: `Congratulations! Your claim for ${item.ItemName} has been approved.`,
               type: "claim",
+              link: "/myclaims",
             },
           ],
           { session }
@@ -192,6 +194,7 @@ class ClaimController {
             to: c.User, // Just the ID
             message: `Your claim for ${item.ItemName} was rejected.`,
             type: "claim",
+            link: "/myclaims",
           }));
 
           await Notification.insertMany(rejectNotifications, { session });
@@ -213,27 +216,11 @@ class ClaimController {
               to: claim.User, // Just the ID
               message: `Your claim for ${item.ItemName} was rejected. Please follow up with our office`,
               type: "claim",
+              link: "/myclaims",
             },
           ],
           { session }
         );
-      } else if (Status === "escalated" && !admin) {
-        await Item.findByIdAndUpdate(
-          Itemid,
-          { isEscalated: true },
-          { session }
-        );
-
-        const Admins = await User.find({ Role: "Admin" }).session(session);
-        const notifications = Admins.map((Admin) => ({
-          to: Admin._id, // Just the ID
-          type: "item",
-          message: `An item "${item.ItemName}" has been escalated by ${item.Foundby}. Please handle it`,
-          item: item._id, // Just the ID
-          from: null,
-        }));
-
-        await Notification.insertMany(notifications, { session });
       }
 
       await session.commitTransaction();
@@ -255,18 +242,36 @@ class ClaimController {
     const currentuserid = req.user;
     console.log(currentuserid);
     const { Status } = req.query;
+    console.log(`Current status:${Status}`);
     let queryobject = {};
+    if (Status && Status !== "All") {
+      queryobject.Status = Status;
+    }
+
     if (Status) {
       queryobject.Status = Status;
     }
     const userclaims = await Claim.find({
       ...queryobject,
       User: currentuserid,
-    });
+    })
+      .populate({
+        path: "Item",
+        select: "ItemName _id Imageurl Status",
+      })
+      .populate({
+        path: "Answers",
+        select: "Question_id Answertext",
+        populate: {
+          path: "Question_id",
+          select: "Questiontext",
+        },
+      });
     return res
       .status(StatusCodes.OK)
       .json({ message: "My claims retrieved successfully", data: userclaims });
   }
+
   // Helper function
   static async getClaimsGroupedByItem({
     forUserId = null,
@@ -278,7 +283,9 @@ class ClaimController {
     if (onlyEscalated) itemFilter.isEscalated = true;
 
     const items = await Item.findOne({ ...itemFilter, _id: itemid })
-      .select("ItemName Decscription Imageurl  Claims ")
+      .select(
+        "ItemName Description Category Imageurl Locationfound createdAt Status Claims isEscalated"
+      )
       .populate({
         path: "Claims",
         options: { sort: { createdAt: -1 } },
