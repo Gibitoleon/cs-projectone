@@ -48,7 +48,9 @@ class DisputeController {
     // send the notifications to admin
     await Notification.insertMany(notifications);
 
-    return res.status(StatusCodes.CREATED).json({ message: "dispute raised" });
+    return res
+      .status(StatusCodes.CREATED)
+      .json({ message: "dispute raised", createdDispute });
   }
   async GetDisputes(req, res) {
     const { itemid } = req.params;
@@ -143,6 +145,19 @@ class DisputeController {
     return res
       .status(StatusCodes.OK)
       .json({ message: "Updated Individual dispute" });
+  }
+
+  async getmyDisputes(req, res) {
+    console.log("endpoint hit.....");
+    const currentuserid = req.user;
+    const { itemId, claimId } = req.params;
+    const mydisputeforClaim = await Dispute.findOne({
+      Raisedby: currentuserid,
+      Item: itemId,
+      Claim: claimId,
+    });
+
+    return res.status(StatusCodes.OK).json({ data: mydisputeforClaim });
   }
 }
 module.exports = new DisputeController();

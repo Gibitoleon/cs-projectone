@@ -6,7 +6,7 @@ const express = require("express"); //for creating server
 const cookieparser = require("cookie-parser"); //for parsing cookies
 const { v2: cloudinary } = require("cloudinary"); //for uploading images to cloudinary
 const cors = require("cors");
-const { app, server } = require("./ServerConfig/server.config"); //requiring our configured server
+const { app, server, io } = require("./ServerConfig/server.config"); //requiring our configured server
 
 //requiring Routes
 const authroutes = require("./Routes/auth.routes"); //importing auth routes
@@ -69,3 +69,15 @@ const StartServer = async () => {
   }
 };
 StartServer(); //calling the function to start the server
+
+io.on("connection", (socket) => {
+  const userId = socket.handshake.query.userId;
+  if (userId) {
+    socket.join(`user_${userId}`);
+    console.log(`User ${userId} joined room user_${userId}`);
+  }
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", userId);
+  });
+});

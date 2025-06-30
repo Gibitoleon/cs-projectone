@@ -26,6 +26,10 @@ const claimSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    isMade: {
+      type: Boolean,
+      default: true,
+    },
     Answers: {
       type: [
         {

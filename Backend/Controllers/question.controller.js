@@ -16,7 +16,7 @@ class QuestionController {
     const item = await Item.FindItem({
       _id: Itemid,
       Status: "approved",
-      /* isVerificationQuestionSet: false,*/
+      isVerificationQuestionSet: false,
     });
 
     if (!item.isMatchingId(item.Foundby, currentuserid)) {
@@ -59,7 +59,6 @@ class QuestionController {
       )
       .populate("Questions");
 
-    console.log(item);
     return res
       .status(StatusCodes.OK)
       .json({ message: "questions retrieved successfully", item });
