@@ -178,7 +178,7 @@ class ClaimController {
           ],
           { session }
         );
-        io.to(`user_${claim.User}`).emit(`reviewnotifications`, {
+        io.to(`user_${claim.User}`).emit(`notifications`, {
           to: claim.User,
           message: `Congratulations! Your claim for ${item.ItemName} has been approved.`,
           type: "claim",
@@ -227,7 +227,7 @@ class ClaimController {
               link: "/myclaims",
             };
 
-            io.to(socketRoom).emit("reviewnotifications", payload);
+            io.to(socketRoom).emit("notifications", payload);
           });
         }
       } else if (Status === "rejected") {
@@ -253,7 +253,7 @@ class ClaimController {
 
           { session }
         );
-        io.to(`user_${claim.User}`).emit("reviewnotifications", {
+        io.to(`user_${claim.User}`).emit("notifications", {
           to: claim.User,
           message: `Your claim for ${item.ItemName} was rejected. Please follow up with our office.`,
           type: "claim",

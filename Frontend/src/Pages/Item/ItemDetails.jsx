@@ -5,6 +5,7 @@ import { useCustomQuery } from "../../Customhooks/useQuery";
 import useCustommutation from "../../Customhooks/useMutation";
 import { toast } from "react-hot-toast";
 import { FaRegUser } from "react-icons/fa";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ItemDetailsPage = () => {
   const [Questions, setQuestions] = useState([""]);
@@ -13,7 +14,7 @@ const ItemDetailsPage = () => {
   const [Status, setStatus] = useState("approved");
   const [activeClaimId, setActiveClaimId] = useState(null);
   const [buttonname, setbuttonName] = useState(null);
-
+  const queryClient = useQueryClient();
   const questionmutation = useCustommutation({
     onSuccess: (data) => {
       const { message } = data;
@@ -37,6 +38,7 @@ const ItemDetailsPage = () => {
 
   const reviewmutation = useCustommutation({
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["claimsreview"] });
       toast.success(data.message || "Claim reviewed successfully.");
     },
     onError: (error) => {
@@ -111,47 +113,48 @@ const ItemDetailsPage = () => {
             </span>
           </div>
 
-          {ItemDetails?.data?.Status === "approved" && (
-            <div className="verification-section-inline">
-              <h3>🛡️ Set Verification Questions</h3>
-              <form
-                onSubmit={(e) => {
-                  handleSubmit(e, ItemDetails?.data?._id);
-                }}
-              >
-                {Questions.map((q, i) => (
-                  <input
-                    key={i}
-                    type="text"
-                    placeholder={`Question ${i + 1}`}
-                    value={q}
-                    onChange={(e) => handleQuestionChange(i, e.target.value)}
-                    required
-                  />
-                ))}
-                <button type="button" onClick={handleAddQuestion}>
-                  ➕ Add Another Question
-                </button>
-                <button type="submit">
-                  {questionmutation.isPending ? (
-                    <span className="loading loading-spinner loading-xs"></span>
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
-              </form>
-              {submittedQuestions.length > 0 && (
-                <div className="verification-questions-display">
-                  <h4>✔️ Submitted Questions:</h4>
-                  <ul>
-                    {submittedQuestions.map((q, i) => (
-                      <li key={i}>{q}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
+          {ItemDetails?.data?.Status === "approved" &&
+            ItemDetails?.data?.isEscalated != true && (
+              <div className="verification-section-inline">
+                <h3>🛡️ Set Verification Questions</h3>
+                <form
+                  onSubmit={(e) => {
+                    handleSubmit(e, ItemDetails?.data?._id);
+                  }}
+                >
+                  {Questions.map((q, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      placeholder={`Question ${i + 1}`}
+                      value={q}
+                      onChange={(e) => handleQuestionChange(i, e.target.value)}
+                      required
+                    />
+                  ))}
+                  <button type="button" onClick={handleAddQuestion}>
+                    ➕ Add Another Question
+                  </button>
+                  <button type="submit">
+                    {questionmutation.isPending ? (
+                      <span className="loading loading-spinner loading-xs"></span>
+                    ) : (
+                      "Submit"
+                    )}
+                  </button>
+                </form>
+                {submittedQuestions.length > 0 && (
+                  <div className="verification-questions-display">
+                    <h4>✔️ Submitted Questions:</h4>
+                    <ul>
+                      {submittedQuestions.map((q, i) => (
+                        <li key={i}>{q}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       </div>
 

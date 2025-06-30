@@ -25,7 +25,7 @@ const LostItemCard = ({ item }) => {
           }}
         />
 
-        <div className="new-badge">NEW</div>
+        {item.isNew === false && <div className="new-badge">NEW</div>}
       </div>
 
       <div className="card-body">
