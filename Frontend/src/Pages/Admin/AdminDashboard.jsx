@@ -28,9 +28,9 @@ const AdminDashboard = () => {
   const tab = params.get("tab") || "dashboard";
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div style={{ display: "flex", width: "100vw", minHeight: "100vh" }}>
       <AdminSidebar activeTab={tab} />
-      <main className="flex-1 p-6 overflow-auto">
+      <main style={{ flex: 1, padding: "24px", overflow: "auto" }}>
         {getTabComponent(tab)}
       </main>
     </div>

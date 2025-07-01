@@ -18,16 +18,6 @@ const UsersTab = () => {
     fetchUsers();
   }, []);
 
-  const handleBlock = async (id, blocked) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(`/admin/users/${id}/block`, { blocked: !blocked }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchUsers();
-    } catch (err) {}
-  };
-
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Registered Users</h2>
@@ -38,8 +28,6 @@ const UsersTab = () => {
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Role</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -48,21 +36,6 @@ const UsersTab = () => {
                 <td className="px-4 py-2">{user.name}</td>
                 <td className="px-4 py-2">{user.email}</td>
                 <td className="px-4 py-2">{user.role}</td>
-                <td className="px-4 py-2">
-                  {user.blocked ? (
-                    <span className="text-red-600 font-semibold">Blocked</span>
-                  ) : (
-                    <span className="text-green-600 font-semibold">Active</span>
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  <button
-                    className={`px-3 py-1 rounded shadow text-white ${user.blocked ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}`}
-                    onClick={() => handleBlock(user._id, user.blocked)}
-                  >
-                    {user.blocked ? "Unblock" : "Block"}
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>

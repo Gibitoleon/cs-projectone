@@ -19,13 +19,13 @@ import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import "./App.css";
 function App() {
   const authuser = useLoginStore((state) => state.authuser);
-  // Only show Sidebar if not on /admin and not on /login
   const location = window.location.pathname;
   const isAdminPage = location.startsWith("/admin");
   const isLoginPage = location.startsWith("/login");
+  const isSignupPage = location.startsWith("/signup");
   return (
     <div className="app">
-      {authuser && !isAdminPage && !isLoginPage && <Sidebar />}
+      {authuser && !isAdminPage && !isLoginPage && !isSignupPage && <Sidebar />}
 
       {/*  my frontend routes */}
       <Routes>

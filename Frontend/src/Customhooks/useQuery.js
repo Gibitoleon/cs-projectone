@@ -3,7 +3,7 @@ import FetchApi from "../utils/Fetch";
 
 export const useCustomQuery = (querykey, url, options = {}) => {
   return useQuery({
-    queryKey: [querykey],
+    queryKey: querykey, // FIXED: use querykey directly, not [querykey]
     queryFn: () => FetchApi(url),
     retry: false,
     ...options,

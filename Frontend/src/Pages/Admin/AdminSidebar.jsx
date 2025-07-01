@@ -3,14 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { useLoginStore } from "../../Stores/useLoginStore";
 import { TbLogout2 } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa";
+import {
+  MdDashboard,
+  MdOutlineInventory2,
+  MdOutlineAssignment,
+  MdGavel,
+  MdPeopleOutline,
+} from "react-icons/md";
 import "../../css/Sidebar.css";
 
 const tabs = [
-  { label: "Dashboard", value: "dashboard" },
-  { label: "Found Items", value: "items" },
-  { label: "Claims", value: "claims" },
-  { label: "Disputes", value: "disputes" },
-  { label: "Users", value: "users" },
+  { label: "Dashboard", value: "dashboard", icon: <MdDashboard size={20} /> },
+  {
+    label: "Found Items",
+    value: "items",
+    icon: <MdOutlineInventory2 size={20} />,
+  },
+  { label: "Claims", value: "claims", icon: <MdOutlineAssignment size={20} /> },
+  { label: "Disputes", value: "disputes", icon: <MdGavel size={20} /> },
+  { label: "Users", value: "users", icon: <MdPeopleOutline size={20} /> },
 ];
 
 const AdminSidebar = ({ activeTab }) => {
@@ -36,6 +47,7 @@ const AdminSidebar = ({ activeTab }) => {
                 activeTab === tab.value ? " active" : ""
               }`}
             >
+              <span className="nav-icon">{tab.icon}</span>
               <span className="nav-text">{tab.label}</span>
             </button>
           ))}
