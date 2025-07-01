@@ -18,4 +18,9 @@ router.patch(
   DisputeController.UpdateSingleDispute
 );
 
+router.get(
+  "/getmydisputes/Item/:itemId/claim/:claimId",
+  DisputeController.getmyDisputes
+);
+
 module.exports = router;

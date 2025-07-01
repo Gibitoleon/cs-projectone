@@ -6,6 +6,7 @@ const User = require("../Model/user.model");
 const Answer = require("../Model/answer.model");
 const Notification = require("../Model/notification.model");
 const mongoose = require("mongoose");
+const { io } = require("../ServerConfig/server.config");
 
 class ClaimController {
   async ClaimItem(req, res) {
@@ -13,6 +14,14 @@ class ClaimController {
     const { Itemid } = req.params;
     const { answers } = req.body;
     console.log(currentuserid, Itemid);
+
+    const claim = await Claim.findOne({ User: currentuserid, Item: Itemid });
+    if (claim) {
+      throw new CustomError(
+        `you already made the claim`,
+        StatusCodes.BAD_REQUEST
+      );
+    }
 
     //answers section
     if (!Array.isArray(answers) || answers.length === 0) {
@@ -58,15 +67,19 @@ class ClaimController {
     });
 
     //finally send notification to finder about claim
-    await Notification.create({
+    const notification = {
       to: item.Foundby,
       message: `A claim has been raised for Item ${item.ItemName}`,
       type: "claim",
       link: `/finder/item/${item._id}`,
-    });
+    };
+    await Notification.create(notification);
+
+    io.to(`user_${item.Foundby}`).emit("notifications", notification);
+
     return res
       .status(StatusCodes.CREATED)
-      .json({ message: `claimed successfully` });
+      .json({ message: `claimed successfully`, data: claimtocreate.isMade });
   }
 
   async GetClaimsForItemFinder(req, res) {
@@ -153,10 +166,11 @@ class ClaimController {
         );
 
         // Create notification - pass session in options
-        await Notification.create(
+
+        const notification = await Notification.create(
           [
             {
-              to: claim.User, // Make sure this is just the ID, not the session
+              to: claim.User,
               message: `Congratulations! Your claim for ${item.ItemName} has been approved.`,
               type: "claim",
               link: "/myclaims",
@@ -164,6 +178,12 @@ class ClaimController {
           ],
           { session }
         );
+        io.to(`user_${claim.User}`).emit(`notifications`, {
+          to: claim.User,
+          message: `Congratulations! Your claim for ${item.ItemName} has been approved.`,
+          type: "claim",
+          link: "/myclaims",
+        });
 
         // Find and reject other claims
         const rejectedclaims = await Claim.find({
@@ -198,6 +218,17 @@ class ClaimController {
           }));
 
           await Notification.insertMany(rejectNotifications, { session });
+          rejectedclaims.forEach((c) => {
+            const socketRoom = `user_${c.User}`;
+            const payload = {
+              to: c.User,
+              message: `Your claim for ${item.ItemName} was rejected.`,
+              type: "claim",
+              link: "/myclaims",
+            };
+
+            io.to(socketRoom).emit("notifications", payload);
+          });
         }
       } else if (Status === "rejected") {
         await Claim.findByIdAndUpdate(
@@ -219,8 +250,15 @@ class ClaimController {
               link: "/myclaims",
             },
           ],
+
           { session }
         );
+        io.to(`user_${claim.User}`).emit("notifications", {
+          to: claim.User,
+          message: `Your claim for ${item.ItemName} was rejected. Please follow up with our office.`,
+          type: "claim",
+          link: "/myclaims",
+        });
       }
 
       await session.commitTransaction();
@@ -284,7 +322,7 @@ class ClaimController {
 
     const items = await Item.findOne({ ...itemFilter, _id: itemid })
       .select(
-        "ItemName Description Category Imageurl Locationfound createdAt Status Claims isEscalated"
+        "ItemName Description Category Imageurl Locationfound createdAt Status Claims isEscalated isNew"
       )
       .populate({
         path: "Claims",

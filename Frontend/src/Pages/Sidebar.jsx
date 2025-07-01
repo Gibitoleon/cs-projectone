@@ -8,6 +8,7 @@ import { useCustomQuery } from "../Customhooks/useQuery";
 
 import useCustommutation from "../Customhooks/useMutation";
 import { useLoginStore } from "../Stores/useLoginStore";
+import { useSocketStore } from "../Stores/useSocketStore";
 import { toast } from "react-hot-toast";
 
 import "../css/Sidebar.css";
@@ -39,7 +40,7 @@ export const Sidebar = ({ user, onLogout }) => {
     onSuccess: (data) => {
       const { message } = data;
       toast.success(message);
-      localStorage.removeItem("auth-user");
+      useSocketStore.getState().disconnect();
       setAuthUser(null);
       navigate("/login");
     },

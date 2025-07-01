@@ -14,13 +14,16 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { toast } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const ClaimPage = () => {
   useProgressBar();
   const queryClient = useQueryClient();
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const navigate = useNavigate();
+
   const { itemId } = useParams(); // Get itemId from URL params
   console.log("Item ID:", itemId);
+  let isSubmitted = false;
   const { data, isFetching, error } = useCustomQuery(
     "claimItem",
     `questions/getverificationquestions/Item/${itemId}`
@@ -32,8 +35,10 @@ const ClaimPage = () => {
       toast.success(data.message, {
         position: "bottom-right", // optional override (optional if set globally)
       });
-      setIsSubmitted(true);
+      isSubmitted = data.data.isMade;
+      console.log(isSubmitted);
       queryClient.invalidateQueries("claimItem");
+      navigate("/myclaims");
     },
     onError: (error) => {
       NProgress.done();

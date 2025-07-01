@@ -2,6 +2,9 @@ import { useState } from "react";
 import "../../css/Myclaims.css";
 import { useCustomQuery } from "../../Customhooks/useQuery";
 import useProgressBar from "../../Customhooks/useProgressbar";
+import useCustommutation from "../../Customhooks/useMutation";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 const ClaimsPage = () => {
   useProgressBar();
@@ -9,7 +12,33 @@ const ClaimsPage = () => {
   const [disputes, setDisputes] = useState({});
   const [showDisputeForm, setShowDisputeForm] = useState(null);
   const [disputeText, setDisputeText] = useState("");
+  const disputeMutation = useCustommutation({
+    onSuccess: async (data) => {
+      const { message, createdDispute } = data;
+      console.log(createdDispute);
 
+      toast.success(message);
+      try {
+        const res = await axios.get(
+          `http://localhost:4000/api/v1/disputes/getmydisputes/Item/${createdDispute.Item}/claim/${createdDispute.Claim}`
+        );
+
+        const dispute = res.data?.data;
+        console.log(dispute);
+
+        setDisputes((prev) => ({
+          ...prev,
+          [createdDispute.Claim]: dispute?.Reason || "Dispute submitted.",
+        }));
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to fetch dispute");
+      }
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message);
+    },
+  });
   const {
     data: myclaims,
     isFetching,
@@ -21,8 +50,13 @@ const ClaimsPage = () => {
 
   console.log(statusFilter);
 
-  const handleDisputeSubmit = (id) => {
-    setDisputes({ ...disputes, [id]: disputeText });
+  const handleDisputeSubmit = (e, claimid, itemid) => {
+    e.preventDefault();
+    disputeMutation.mutate({
+      url: `/disputes/raisedispute/claim/${claimid}/item/${itemid}`,
+      method: `POST`,
+      info: { Reason: disputeText },
+    });
     setDisputeText("");
     setShowDisputeForm(null);
   };
@@ -73,15 +107,15 @@ const ClaimsPage = () => {
                   ))}
                 </div>
 
-                {claim?.Status === "rejected" && !disputes[claim.id] && (
+                {claim?.Status === "rejected" && !disputes[claim?._id] && (
                   <>
                     <button
                       className="dispute-btn"
-                      onClick={() => setShowDisputeForm(claim.id)}
+                      onClick={() => setShowDisputeForm(claim?._id)}
                     >
                       Raise Dispute
                     </button>
-                    {showDisputeForm === claim.id && (
+                    {showDisputeForm === claim?._id && (
                       <div className="dispute-form">
                         <textarea
                           placeholder="Describe your dispute"
@@ -89,7 +123,9 @@ const ClaimsPage = () => {
                           onChange={(e) => setDisputeText(e.target.value)}
                         ></textarea>
                         <button
-                          onClick={() => handleDisputeSubmit(claim.id)}
+                          onClick={(e) =>
+                            handleDisputeSubmit(e, claim?._id, claim?.Item?._id)
+                          }
                           className="submit-dispute-btn"
                         >
                           Submit Dispute
@@ -99,9 +135,9 @@ const ClaimsPage = () => {
                   </>
                 )}
 
-                {disputes[claim.id] && (
+                {disputes[claim?._id] && (
                   <div className="dispute-display">
-                    <strong>Your Dispute:</strong> {disputes[claim.id]}
+                    <strong>Your Dispute:</strong> {disputes[claim?._id]}
                   </div>
                 )}
               </div>

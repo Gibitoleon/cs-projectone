@@ -6,6 +6,7 @@ import "../../css/login.css";
 import useCustommutation from "../../Customhooks/useMutation";
 import { useLoginStore } from "../../Stores/useLoginStore";
 import { useSignupStore } from "../../Stores/useSignupStore";
+import { useSocketStore } from "../../Stores/useSocketStore";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 
@@ -18,13 +19,14 @@ export const Login = () => {
   const handleChange = useLoginStore((state) => state.handleChange);
   const getLoginData = useLoginStore((state) => state.getLoginData);
   const setAuthUser = useLoginStore((state) => state.setauthUser);
+  const connect = useSocketStore((state) => state.connect);
   const mutation = useCustommutation({
     onSuccess: (data) => {
       const { message, Authuser } = data;
       console.log(Authuser);
       toast.success(message);
       setAuthUser(Authuser);
-
+      connect();
       navigate("/Search");
     },
     onError: (error) => {
