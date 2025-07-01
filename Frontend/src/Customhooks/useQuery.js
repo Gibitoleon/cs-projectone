@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import FetchApi from "../utils/Fetch";
+import FetchApi from "../Utils/Fetch";
 
 export const useCustomQuery = (querykey, url, options = {}) => {
   return useQuery({

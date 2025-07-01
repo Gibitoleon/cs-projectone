@@ -19,9 +19,9 @@ const UsersTab = () => {
   }, []);
 
   return (
-    <div>
+    <div className="h-full w-full flex flex-col">
       <h2 className="text-2xl font-bold mb-6">Registered Users</h2>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto flex-1">
         <table className="min-w-full bg-white rounded-lg shadow">
           <thead>
             <tr>
