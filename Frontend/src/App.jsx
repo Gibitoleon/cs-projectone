@@ -15,12 +15,17 @@ import MyClaimsPage from "./Pages/Item/Myclaims";
 import ProfilePage from "./Pages/Auth/Profile";
 import NotificationPage from "./Pages/Notifications";
 import { useLoginStore } from "./Stores/useLoginStore";
+import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import "./App.css";
 function App() {
   const authuser = useLoginStore((state) => state.authuser);
+  // Only show Sidebar if not on /admin and not on /login
+  const location = window.location.pathname;
+  const isAdminPage = location.startsWith("/admin");
+  const isLoginPage = location.startsWith("/login");
   return (
     <div className="app">
-      {authuser && <Sidebar />}
+      {authuser && !isAdminPage && !isLoginPage && <Sidebar />}
 
       {/*  my frontend routes */}
       <Routes>
@@ -33,6 +38,7 @@ function App() {
         <Route path="/myclaims" element={<MyClaimsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/notifications" element={<NotificationPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
 
       <Toaster />

@@ -1,5 +1,9 @@
 import axios from "axios";
 
+const instance = axios.create({
+  baseURL: "http://localhost:4000/api", // Change to your backend base URL if needed
+});
+
 axios.defaults.withCredentials = true;
 
 const FetchApi = async (url, method = "GET", info) => {
@@ -15,7 +19,7 @@ const FetchApi = async (url, method = "GET", info) => {
     config.data = info;
   }
 
-  const { data } = await axios(config);
+  const { data } = await instance(config);
   return data;
 };
 export default FetchApi;

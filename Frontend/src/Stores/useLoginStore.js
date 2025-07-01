@@ -7,8 +7,16 @@ export const useLoginStore = create(
       Email: "",
       Password: "",
       authuser: null,
+      user: null,
 
       setauthUser: (user) => set({ authuser: user }),
+      setUser: (user) => set({ user }),
+
+      logout: () => {
+        localStorage.removeItem("token");
+        set({ user: null });
+        window.location.href = "/login";
+      },
 
       setField: (key, value) => set({ [key]: value }),
       getLoginData: () => {
