@@ -3,6 +3,8 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 
 const FetchApi = async (url, method = "GET", info) => {
+  console.log("Fetching URL:", url);
+
   const config = {
     url,
     method,

@@ -119,3 +119,11 @@
 .details-button:hover {
   background-color: #1d4ed8;
 }
+
+.view-more-btn {
+  background-color: #2563eb;
+}
+
+.view-more-btn:hover {
+  background-color: #1d4ed8;
+}

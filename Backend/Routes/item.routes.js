@@ -28,5 +28,8 @@ router.get(
   ItemController.AdminGetAllItems
 );
 
+router.get("/pendingitems/:itemId", ItemController.GetPendingItem);
+router.get("/approveditem/:itemId", ItemController.GetApprovedItem);
 router.patch("/escalateitem/:Itemid", ItemController.EscalateItem);
+router.patch("/updateitemreturned/:itemId", ItemController.UpdateItemReturned);
 module.exports = router;

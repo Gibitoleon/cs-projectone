@@ -1,0 +1,108 @@
+.approved-claimants-container {
+  flex: 1;
+  min-width: 320px;
+  padding: 32px 24px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-left: 1px solid #e5e7eb; /* subtle separation from item details */
+}
+
+.approved-claimants-container h3 {
+  font-size: 1.4rem;
+  color: #1f2937;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.approved-claimant-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.claimant-avatar-container {
+  width: 100px; /* adjust size as needed */
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #dbeafe;
+  background-color: #f3f4f6; /* fallback background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.claimant-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.approved-claimant-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  text-align: center;
+  color: #374151;
+}
+
+.approved-claimant-card strong {
+  font-weight: 600;
+}
+
+.approved-claimant-card ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.approved-claimant-card ul li {
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.return-status {
+  margin-top: 16px;
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.returned {
+  color: #10b981;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.not-returned {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.mark-returned-btn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mark-returned-btn:hover {
+  background-color: #059669;
+}

@@ -1,0 +1,291 @@
+.admin-item-details-container {
+  flex: 1;
+  padding: 32px;
+  background-color: #f9fafb;
+  overflow-y: auto;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.details-card {
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  background-color: #ffffff;
+}
+
+/* Left side (item details) */
+.item-section {
+  flex: 1;
+  min-width: 320px;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-image-container {
+  width: 100%;
+  height: 240px;
+  position: relative;
+}
+
+.item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: #fbbf24;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.status-approved {
+  background-color: #10b981;
+}
+
+.status-rejected {
+  background-color: #ef4444;
+}
+
+.item-details {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-details h2 {
+  font-size: 1.4rem;
+  color: #1e293b;
+  margin: 0;
+}
+
+.category-badge {
+  background-color: #e0f2fe;
+  color: #0284c7;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.item-description h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #6b7280;
+}
+
+.item-description p {
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* Right side (founder details) */
+.founder-section {
+  flex: 1;
+  min-width: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 24px;
+}
+
+.founder-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.founder-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #dbeafe;
+}
+
+.founder-info h3 {
+  font-size: 1.2rem;
+  color: #1f2937;
+}
+
+.founder-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.founder-contact div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contact-btn {
+  margin-top: 12px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.contact-btn:hover {
+  background-color: #2563eb;
+}
+
+/* Action buttons */
+.admin-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.approve-btn,
+.reject-btn {
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.approve-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.approve-btn:hover {
+  background-color: #059669;
+}
+
+.reject-btn {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.reject-btn:hover {
+  background-color: #fecaca;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .details-card {
+    flex-direction: column;
+  }
+
+  .item-section {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .founder-section {
+    border-top: none;
+  }
+}
+
+.rejection-section {
+  margin-top: 20px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.rejection-section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #b91c1c;
+}
+
+.rejection-section p {
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.reason-textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.save-btn,
+.edit-btn,
+.undo-btn {
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.save-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #059669;
+}
+
+.edit-btn {
+  background-color: #facc15;
+  color: #1f2937;
+}
+
+.edit-btn:hover {
+  background-color: #eab308;
+}
+
+.undo-btn {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.undo-btn:hover {
+  background-color: #d1d5db;
+}

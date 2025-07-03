@@ -6,6 +6,7 @@ const Item = require("../Model/item.model");
 const mongoose = require("mongoose");
 const Notification = require("../Model/notification.model");
 const User = require("../Model/user.model");
+const { io } = require("../ServerConfig/server.config.js");
 class DisputeController {
   async RaiseDispute(req, res) {
     const currentuserid = req.user;
@@ -47,7 +48,9 @@ class DisputeController {
     }));
     // send the notifications to admin
     await Notification.insertMany(notifications);
-
+    notifications.forEach((notification) => {
+      io.to(`user_${notification.to}`).emit("notifications", notification);
+    });
     return res
       .status(StatusCodes.CREATED)
       .json({ message: "dispute raised", createdDispute });
@@ -80,7 +83,7 @@ class DisputeController {
         },
         {
           path: "Disputes",
-          select: "Raisedby Reason Handledby",
+          select: "Raisedby Reason Handledby Status",
           populate: [
             {
               path: "Raisedby",
@@ -93,7 +96,7 @@ class DisputeController {
           ],
         },
       ]);
-    return res.status(200).json(itemwithDisputes);
+    return res.status(200).json({ data: itemwithDisputes });
   }
 
   async UpdateSingleDispute(req, res) {
@@ -144,7 +147,7 @@ class DisputeController {
 
     return res
       .status(StatusCodes.OK)
-      .json({ message: "Updated Individual dispute" });
+      .json({ message: "Dispute reviewed successfully" });
   }
 
   async getmyDisputes(req, res) {

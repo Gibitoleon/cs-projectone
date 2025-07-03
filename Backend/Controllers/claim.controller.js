@@ -146,11 +146,18 @@ class ClaimController {
         );
       }
 
-      if (!item.isMatchingId(item.Foundby.toString(), currentuserid)) {
+      if (
+        !admin &&
+        !item.isMatchingId(item.Foundby.toString(), currentuserid)
+      ) {
         throw new UserError(
           "You are not the founder of this item hence cannot review",
           StatusCodes.FORBIDDEN
         );
+      }
+      if (admin && item.isEscalated === true) {
+        item.isEscalated = false;
+        await item.save({ session }); // save within the transaction
       }
 
       if (Status === "approved") {

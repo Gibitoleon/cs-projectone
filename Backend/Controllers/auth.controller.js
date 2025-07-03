@@ -27,6 +27,7 @@ class AuthController {
       Surname: user.Surname,
       Phonenumber: user.Phonenumber,
       ProfileImg: user.ProfileImg,
+      Role: user.Role,
     }; //create an object with the user information
     return res.status(200).json({ message: "Login successful", Authuser });
   }

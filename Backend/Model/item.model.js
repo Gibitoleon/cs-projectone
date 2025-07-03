@@ -75,6 +75,10 @@ const itemSchema = new mongoose.Schema(
       ],
       default: [],
     },
+    Isreturned: {
+      type: Boolean,
+      default: false,
+    },
     Claims: {
       type: [
         {

@@ -20,6 +20,7 @@ export const Login = () => {
   const getLoginData = useLoginStore((state) => state.getLoginData);
   const setAuthUser = useLoginStore((state) => state.setauthUser);
   const connect = useSocketStore((state) => state.connect);
+
   const mutation = useCustommutation({
     onSuccess: (data) => {
       const { message, Authuser } = data;
@@ -27,7 +28,13 @@ export const Login = () => {
       toast.success(message);
       setAuthUser(Authuser);
       connect();
-      navigate("/Search");
+
+      //  Role-based redirect
+      if (Authuser?.Role === "Admin") {
+        navigate("/adminReview");
+      } else {
+        navigate("/search");
+      }
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message);
@@ -86,9 +93,9 @@ export const Login = () => {
                   onClick={() => togglePasswordVisibility()}
                 >
                   {showPassword ? (
-                    <EyeOff size={18} className="text-gray-500" />
-                  ) : (
                     <Eye size={18} className="text-gray-500" />
+                  ) : (
+                    <EyeOff size={18} className="text-gray-500" />
                   )}
                 </button>
               </div>
@@ -100,7 +107,7 @@ export const Login = () => {
 
             <p className="form-subtitle" style={{ marginTop: "1.5rem" }}>
               Don’t have an account?{" "}
-              <Link to="/Signup" className="text-blue-500 underline">
+              <Link to="/signup" className="text-blue-500 underline">
                 Sign Up
               </Link>
             </p>

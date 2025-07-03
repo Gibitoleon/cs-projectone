@@ -8,6 +8,7 @@ const Notification = require("../Model/notification.model.js");
 const { StatusCodes } = require("http-status-codes");
 const Fetchapi = require("../Utils/Axios.js"); //importing the fetch api utility for making external requests
 const { ItemError } = require("../Errors/errors.js");
+const { io } = require("../ServerConfig/server.config.js");
 const mongoose = require("mongoose");
 
 class ItemController {
@@ -39,6 +40,10 @@ class ItemController {
     }));
     // send the notifications to admin
     await Notification.insertMany(notifications);
+
+    notifications.forEach((notification) => {
+      io.to(`user_${notification.to}`).emit("notifications", notification);
+    });
 
     console.log(itemcreated); //log the created item
     return res
@@ -86,6 +91,7 @@ class ItemController {
           message: `Your item ${item.ItemName} was rejected. Please follow up with our office`,
           link: `/finder/item/${item._id}`,
         });
+        io.to(`user_${notification.to}`).emit("notifications", notification);
         return res
           .status(StatusCodes.BAD_REQUEST)
           .json({ message: "Item not approved" });
@@ -113,9 +119,8 @@ class ItemController {
         message: `Your item ${item.ItemName} was successfully uploaded`,
         link: `finder/item/${item._id}`,
       });
-      return res
-        .status(200)
-        .json({ message: "Approve Uploaded Item endpoint hit" });
+      io.to(`user_${notification.to}`).emit("notifications", notification);
+      return res.status(200).json({ message: "Reviewed Successfully" });
     } catch (error) {
       console.log("error in ApproveUploadedItem:", error);
       return res
@@ -179,7 +184,7 @@ class ItemController {
   }
 
   async AdminGetAllItems(req, res) {
-    const { isEscalated, Status } = req.query;
+    const { isEscalated, Status, hasDisputes } = req.query;
     let queryObject = {};
     if (isEscalated === "true") {
       queryObject.isEscalated = true;
@@ -187,13 +192,64 @@ class ItemController {
     if (Status) {
       queryObject.Status = Status;
     }
-    const Items = await Item.find(queryObject);
+    if (hasDisputes === "true") {
+      queryObject.Disputes = { $exists: true, $not: { $size: 0 } };
+    }
+    const Items = await Item.find(queryObject)
+      .select(
+        "ItemName Category Imageurl Description Locationfound createdAt Status isEscalated"
+      )
+      .sort({ createdAt: -1 });
     res.status(StatusCodes.OK).json({
       message: "All items for admin",
       data: Items,
     });
   }
 
+  async GetPendingItem(req, res) {
+    console.log("route hit like now  currently...");
+    const { itemId } = req.params;
+    console.log(itemId);
+    const item = await Item.findOne({ _id: itemId, Status: "pending" })
+      .select(
+        "ItemName Category Imageurl Description Locationfound createdAt Foundby Status"
+      )
+      .populate({
+        path: "Foundby",
+        select: "ProfileImg Firstname Surname Email Phonenumber",
+      });
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Pending item fetched successfully", data: item });
+  }
+
+  async GetApprovedItem(req, res) {
+    const { itemId } = req.params;
+    const item = await Item.findOne({ _id: itemId, Status: "approved" })
+      .select(
+        "ItemName Category Imageurl Description Locationfound createdAt Claims Status Isreturned"
+      )
+      .populate({
+        path: "Claims",
+        match: { Status: "approved" }, // only claims with Status approved
+        select: "User Status Answers createdAt",
+        populate: [
+          {
+            path: "User",
+            select: "Firstname Surname Email Phonenumber ProfileImg",
+          },
+          {
+            path: "Answers",
+            select: "Answertext Question_id",
+            populate: {
+              path: "Question_id",
+              select: "Questiontext",
+            },
+          },
+        ],
+      });
+    return res.status(StatusCodes.OK).json({ data: item });
+  }
   async EscalateItem(req, res) {
     const currentuserid = req.user;
     const { Itemid } = req.params;
@@ -222,12 +278,15 @@ class ItemController {
       const admins = await User.find({ Role: "Admin" }).session(session);
       const notifications = admins.map((admin) => ({
         to: admin._id,
-        message: `Item "${item.ItemName}" has been escalated.`,
+        message: `Item "${item.ItemName}" has been escalated by ${item.Foundby}.`,
         type: "item",
         item: item._id,
       }));
 
       await Notification.insertMany(notifications, { session });
+      notifications.forEach((notification) => {
+        io.to(`user_${notification.to}`).emit("notifications", notification);
+      });
 
       await session.commitTransaction();
       return res.status(200).json({ message: "Item escalated successfully." });
@@ -239,6 +298,20 @@ class ItemController {
     } finally {
       session.endSession();
     }
+  }
+
+  async UpdateItemReturned(req, res) {
+    const { itemId } = req.params;
+    const item = await Item.findByIdAndUpdate(
+      itemId,
+      {
+        Isreturned: true,
+      },
+      { new: true }
+    );
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "successfully updated", id: item._id });
   }
 }
 

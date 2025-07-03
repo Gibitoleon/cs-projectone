@@ -1,0 +1,84 @@
+.escalated-claims-container {
+  flex: 1;
+  min-width: 320px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.escalated-claims-container h3 {
+  font-size: 1.2rem;
+  color: #1f2937;
+  margin-bottom: 16px;
+}
+
+.claimant-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.claimant-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #dbeafe;
+  margin-bottom: 10px;
+}
+
+.qa-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.qa-list li {
+  margin-bottom: 10px;
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.qa-list li strong {
+  color: #1e293b;
+}
+
+.claim-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.claim-actions button {
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.claim-actions .approve-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.claim-actions .approve-btn:hover {
+  background-color: #059669;
+}
+
+.claim-actions .reject-btn {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.claim-actions .reject-btn:hover {
+  background-color: #fecaca;
+}

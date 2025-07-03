@@ -45,6 +45,7 @@ class VerificationGuard {
     if (user.Role !== "Admin") {
       throw new AuthError("Unauthorized access", StatusCodes.FORBIDDEN); //if user is not admin, error
     }
+    console.log("passed here");
     req.user = user; //if user is admin, assign the user to the request object
     next(); //if user is admin, call the next middleware
   }
