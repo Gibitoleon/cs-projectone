@@ -13,7 +13,7 @@ import getRelativeTime from "../Utils/time";
 
 const NotificationPage = () => {
   const navigate = useNavigate();
-  useProgressBar();
+
   const {
     data: Notifications,
     isFetching,

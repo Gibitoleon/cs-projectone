@@ -73,7 +73,7 @@ export const Upload = () => {
           <option value="Electronics">Electronics</option>
           <option value="Books">Books</option>
           <option value="Accessories">Accessories</option>
-          <option value="Others">Others</option>
+          <option value="Other">Other</option>
           <option value="ID-cards">ID Cards</option>
         </select>
 

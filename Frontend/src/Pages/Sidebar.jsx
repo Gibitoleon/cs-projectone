@@ -14,6 +14,7 @@ export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const setAuthUser = useLoginStore((state) => state.setauthUser);
   const authuser = useLoginStore((state) => state.authuser);
+
   const navigate = useNavigate();
 
   const { data: Notifications } = useCustomQuery(
@@ -37,6 +38,7 @@ export const Sidebar = () => {
   });
 
   const handleLogout = () => {
+    US;
     mutation.mutate({
       url: "/auth/logout",
       method: "POST",

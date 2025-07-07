@@ -1,5 +1,8 @@
 import React from "react";
 import { Bar, Pie } from "react-chartjs-2";
+import { useCustomQuery } from "../Customhooks/useQuery";
+import useProgressBar from "../Customhooks/useProgressbar";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,13 +22,20 @@ ChartJS.register(
   Legend
 );
 import "../css/Adminanalytics.css";
+
 export const AdminAnalyticsPage = () => {
+  useProgressBar();
+  const { data, isFetching, error } = useCustomQuery(
+    "analytics",
+    "/analytics/getanalytics"
+  );
+  console.log(data);
   const stats = {
-    totalItems: 120,
-    recoveredItems: 80,
-    pendingItems: 30,
-    rejectedItems: 10,
-    totalUsers: 50,
+    totalItems: data?.data?.TotalItems,
+    recoveredItems: data?.data?.ReturnedItems,
+    pendingItems: data?.data?.PendingItems,
+    rejectedItems: data?.data?.RejectedItems,
+    totalUsers: data?.data?.TotalUsers,
   };
 
   const barData = {

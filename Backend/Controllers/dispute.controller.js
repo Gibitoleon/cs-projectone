@@ -45,6 +45,7 @@ class DisputeController {
       message: `A dispute has been raised for "${item.ItemName}"  and requires your attention`,
       item: itemid,
       from: null,
+      link: `/admin/disputes/${item._id}`,
     }));
     // send the notifications to admin
     await Notification.insertMany(notifications);

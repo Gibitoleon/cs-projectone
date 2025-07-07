@@ -6,8 +6,10 @@ import useCustommutation from "../../Customhooks/useMutation";
 import { toast } from "react-hot-toast";
 import { FaRegUser } from "react-icons/fa";
 import { useQueryClient } from "@tanstack/react-query";
+import useProgressBar from "../../Customhooks/useProgressbar";
 
 const ItemDetailsPage = () => {
+  useProgressBar();
   const [Questions, setQuestions] = useState([""]);
   const { itemId } = useParams();
   const [submittedQuestions, setSubmittedQuestions] = useState([]);

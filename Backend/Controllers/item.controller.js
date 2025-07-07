@@ -37,6 +37,7 @@ class ItemController {
       message: `A new item "${ItemName}" was uploaded by ${user.Firstname} and awaits approval.`,
       item: itemcreated._id,
       from: null,
+      link: `/admin/review/${itemcreated._id}`,
     }));
     // send the notifications to admin
     await Notification.insertMany(notifications);
@@ -94,7 +95,7 @@ class ItemController {
         io.to(`user_${notification.to}`).emit("notifications", notification);
         return res
           .status(StatusCodes.BAD_REQUEST)
-          .json({ message: "Item not approved" });
+          .json({ message: "Item reviewed successfully" });
       }
 
       //upload the image to cloudinary and get the image url
@@ -117,7 +118,7 @@ class ItemController {
         from: currentAdminuser._id,
         to: item.Foundby,
         message: `Your item ${item.ItemName} was successfully uploaded`,
-        link: `finder/item/${item._id}`,
+        link: `/finder/item/${item._id}`,
       });
       io.to(`user_${notification.to}`).emit("notifications", notification);
       return res.status(200).json({ message: "Reviewed Successfully" });
@@ -281,6 +282,7 @@ class ItemController {
         message: `Item "${item.ItemName}" has been escalated by ${item.Foundby}.`,
         type: "item",
         item: item._id,
+        link: `/admin/escalated/${Itemid}`,
       }));
 
       await Notification.insertMany(notifications, { session });

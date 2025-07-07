@@ -15,6 +15,7 @@ const claimroutes = require("./Routes/claim.routes"); //importing claim routes
 const questionroutes = require("./Routes/questions.routes"); //importing question routes
 const disputeroutes = require("./Routes/disputes.routes"); // importing the dispute controller
 const notificationroutes = require("./Routes/notification.routes");
+const analyticsroutes = require("./Routes/analytics.route");
 
 // requiring middlewares
 
@@ -51,6 +52,7 @@ app.use(
   VerificationGuard.jwtVerifyGuard,
   notificationroutes
 );
+app.use("/api/v1/analytics", VerificationGuard.jwtVerifyGuard, analyticsroutes);
 
 //error handler middleware
 app.use(ErrorHandler.HandleError); //using the error handler middleware
