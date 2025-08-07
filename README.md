@@ -38,4 +38,3 @@ The system includes a Python-based microservice that uses [OpenAI’s CLIP](http
 
 ---
 
-🚧 
