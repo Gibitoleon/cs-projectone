@@ -38,7 +38,6 @@ export const Sidebar = () => {
   });
 
   const handleLogout = () => {
-    US;
     mutation.mutate({
       url: "/auth/logout",
       method: "POST",

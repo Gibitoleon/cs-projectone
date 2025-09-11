@@ -80,7 +80,7 @@ const FinderDashboard = () => {
                 >
                   <LostItemCard item={item} showStatusBadge />
                   <div className={`status-badge ${item?.Status.toLowerCase()}`}>
-                    {item?.status}
+                    {item?.Status}
                   </div>
                   {item?.hasNewClaims && (
                     <span className="new-claim-tag">New Claim</span>
@@ -92,7 +92,7 @@ const FinderDashboard = () => {
         </>
       )}
 
-      {activeTab === "upload" && <Upload />}
+      {activeTab === "upload" && <Upload setActiveTab={setActiveTab} />}
     </div>
   );
 };

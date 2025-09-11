@@ -3,12 +3,15 @@ import { useState } from "react";
 import useForm from "../../../Customhooks/useForm";
 import useCustommutation from "../../../Customhooks/useMutation";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
-export const Upload = () => {
+export const Upload = ({ setActiveTab }) => {
   const [Imageurl, setImageurl] = useState("");
+
   const mutation = useCustommutation({
     onSuccess: (data) => {
       toast.success(data.message);
+      setActiveTab("uploaded");
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message);
