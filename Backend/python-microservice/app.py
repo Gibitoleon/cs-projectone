@@ -58,9 +58,10 @@ def vectorize_text():
         text_features /= text_features.norm(dim=-1, keepdim=True)
 
     vector = text_features[0].cpu().numpy().tolist()
+    
     return jsonify({"vector": vector})
 
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=True,host="0.0.0.0", port=5001)

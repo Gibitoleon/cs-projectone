@@ -131,6 +131,7 @@ class ItemController {
   }
   async SearchFoundItem(req, res) {
     const { ItemName, Category, Description } = req.query;
+    console.log("query passed here");
     let results = [];
 
     // Case 1: Vector search by ItemName

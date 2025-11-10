@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend
+    container_name: lostfound-backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "4000:4000"
+    depends_on:
+      - python
+
+  python:
+    build: ./backend/python-microservice
+    container_name: lostfound-python
+    ports:
+      - "5001:5001"
+
+  frontend:
+    build: ./frontend
+    container_name: lostfound-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

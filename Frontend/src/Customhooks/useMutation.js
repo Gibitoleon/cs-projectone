@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import FetchApi from "../utils/Fetch";
+import FetchApi from "../Utils/Fetch";
 const useCustommutation = (options = {}) => {
   return useMutation({
     mutationFn: ({ url, method, info }) => FetchApi(url, method, info),

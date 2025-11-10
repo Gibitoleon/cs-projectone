@@ -8,7 +8,7 @@ class Fetchapi {
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
-      baseURL: `http://127.0.0.1:5001`,
+      baseURL: "http://lostfound-python:5001",
     };
     if (method !== "GET" && method !== "DELETE") {
       config.data = datainfo;

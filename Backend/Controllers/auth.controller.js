@@ -107,6 +107,7 @@ class AuthController {
 
   // update profile
   async UpdateProfile(req, res) {
+    console.log("Update profile called");
     const currentuserid = req.user;
     console.log(currentuserid);
     const user = await User.findById(currentuserid);
@@ -156,6 +157,7 @@ class AuthController {
   }
 
   async UpdateProfileImage(req, res) {
+    console.log("Update profile image called");
     const currentuserid = req.user;
     const user = await User.findOne({ _id: currentuserid });
     const { ProfileImg } = req.body;
